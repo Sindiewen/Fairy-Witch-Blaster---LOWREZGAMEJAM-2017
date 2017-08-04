@@ -57,9 +57,13 @@ public class PlayerShooterController : RaycastController
     private bool _invulnerable;
 
 
+    // Private class methods
+
 	// Use this for initialization
-	void Start ()
+	protected override void Start ()
     {
+        base.Start();
+
         // Initializes sliders to ensure they're full
         healthBar.value = playerHealth;
         manaBar.value = playerMana;
@@ -80,8 +84,19 @@ public class PlayerShooterController : RaycastController
 
         // Calculates the player's box collisions
         playerBoxCollisions();
+
+
+
+        // Checks if the player is dead.
+        //  If dead, game over
+        if (playerHealth <= 0)
+        {
+            gameOver();
+        }
         
 	}
+
+
 
     /// <summary>
     /// Calculates the player's collisions for damage against objects
@@ -98,7 +113,7 @@ public class PlayerShooterController : RaycastController
             
             // If the box cast it an eligable object
             // Enemy, projectile
-            if (hit)
+            if (hit.collider.tag == "Enemy_Projectile")
             {
                 // subtract 1 from the player health
                 playerHealth--;
@@ -108,7 +123,14 @@ public class PlayerShooterController : RaycastController
 
                 // Set the player to be invulnerable for a set period of time
                 Invoke("resetInvulnerability", invulnerabilityTime); 
-            }     
+            } 
+
+            // If the player has hit an instakil hazard (spikes, water, pitfalls)
+            if (hit.collider.tag == "Hazard_Instakill")
+            {
+                // Sets health to 0
+                playerHealth = 0;
+            }    
         }
     }
 
@@ -119,5 +141,15 @@ public class PlayerShooterController : RaycastController
     private void resetInvulnerability()
     {
         _invulnerable = false;
+    }
+
+
+    /// <Summary>
+    /// Kills player and game over
+    /// </Summary>
+    private void gameOver()
+    {
+        // TODO: kill player, game over screen, respawn player after button press
+        this.enabled = false;
     }
 }

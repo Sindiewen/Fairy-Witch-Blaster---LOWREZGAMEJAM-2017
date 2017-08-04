@@ -65,10 +65,12 @@ public class LumiController : MonoBehaviour
     [HideInInspector]
     public Base2DController _playerController;
 
+    // Stores Lumi's velocity
+    [HideInInspector]
+    public Vector3 _lumiVelocity;            // Stores the current velocity
 
     // Private variables
-    // Stores Lumi's velocity
-    private Vector3 _lumiVelocity;            // Stores the current velocity
+    
 
 
     // Defines gravity and jump Velocity

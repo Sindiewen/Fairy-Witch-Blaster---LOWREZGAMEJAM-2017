@@ -5,16 +5,23 @@ public class playerInput : MonoBehaviour
 {
 
     // private Variables
-    LumiController _player;     // Reference to the player Input
+    private LumiController _player;             // Reference to the player Input
+    private PlayerShooterController _shooter;   // player shooter reference
+    
 
     // Defines the playe rinput
     Vector2 _directionalInput;          // Defines the horizontal and vertial movement of the player
 
     private string _jumpKey = "Jump";   // Defines the jump key used for jumping
+    private string _fire_Fairy = "Fire_Fairy";
+    private string _fire_Witch = "Fire_Witch";
 
     private bool _jump;         // Defines if the player is jumping - pressing the jump key
     private bool _notJump;      // If the player is not jumping - letting go of the jump key 
-    private bool _isGliding;
+    private bool _isGliding;    // Checks if the player is gliding or not
+    private bool _firingFairy;
+    private bool _firingWitch;
+    
 
 
 
@@ -36,7 +43,14 @@ public class playerInput : MonoBehaviour
         _jump = Input.GetButtonDown(_jumpKey);
         _notJump = Input.GetButtonUp(_jumpKey);
 
+        // Defines firing
+        _firingFairy = Input.GetButtonDown(_fire_Fairy);
+        _firingWitch = Input.GetButtonDown(_fire_Witch);
 
+
+        ///
+        // Initiates player control
+        ///
 
         // Checks if the player is colliding with the floor
         _isGliding = (!_player._playerController.collisions.below);
@@ -62,6 +76,19 @@ public class playerInput : MonoBehaviour
         {
             // Player is gliding now
             _player.onJumpGlide();
+        }
+        
+
+        // Controls player firing
+        if (_player._lumiVelocity.x > 0)
+        {
+            // Player moving right
+            print("Moving Right");
+        }
+        if (_player._lumiVelocity.x < 0)
+        {
+            // player moving left
+            print("Moving Left");
         }
     }
 }
