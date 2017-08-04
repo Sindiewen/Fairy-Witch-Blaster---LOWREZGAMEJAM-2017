@@ -111,26 +111,33 @@ public class PlayerShooterController : RaycastController
             // Creates box cast at origin, the size of the player's collider, no angle, no direction, no distance, and at a specific layer
             RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, _boxCol.bounds.size, 0, new Vector2(0,0), 0, collisionMask);
             
-            // If the box cast it an eligable object
-            // Enemy, projectile
-            if (hit.collider.tag == "Enemy_Projectile")
+            if (hit)
             {
-                // subtract 1 from the player health
-                playerHealth--;
+                // If the box cast it an eligable object
+                // Enemy, projectile
+                if (hit.collider.tag == "Enemy_Projectile")
+                {
+                    print("hit projectile");
+                    // subtract 1 from the player health
+                    playerHealth--;
 
-                // Makes the player invulnerable
-                _invulnerable = true;
+                    // Makes the player invulnerable
+                    _invulnerable = true;
 
-                // Set the player to be invulnerable for a set period of time
-                Invoke("resetInvulnerability", invulnerabilityTime); 
-            } 
+                    // Set the player to be invulnerable for a set period of time
+                    Invoke("resetInvulnerability", invulnerabilityTime);
+                }
 
-            // If the player has hit an instakil hazard (spikes, water, pitfalls)
-            if (hit.collider.tag == "Hazard_Instakill")
-            {
-                // Sets health to 0
-                playerHealth = 0;
-            }    
+                // If the player has hit an instakil hazard (spikes, water, pitfalls)
+                if (hit.collider.tag == "Hazard_Instakill")
+                {
+                    print("hit hazard");
+
+                    playerHealth = 0;
+                    healthBar.value = playerHealth;
+                }
+            }
+           
         }
     }
 
@@ -150,6 +157,6 @@ public class PlayerShooterController : RaycastController
     private void gameOver()
     {
         // TODO: kill player, game over screen, respawn player after button press
-        this.enabled = false;
+        gameObject.SetActive(false);
     }
 }
