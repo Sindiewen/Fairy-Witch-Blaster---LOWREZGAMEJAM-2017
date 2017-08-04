@@ -7,10 +7,12 @@ public class LumiController : MonoBehaviour
     [Header("Lumi Movement Attributes")]
     [TooltipAttribute("Player Ground Movement Speed")]
     public float moveSpeed = 6;                     // Defines the movespeed for Lumi
-    [TooltipAttribute("How much ground acceleration needed before player reaches max ground movement speed.")]
-    public float accelerationTimeAirborne = 0.2f;   //
     [TooltipAttribute("How much airborne acceleration needed before player reaches max airborne movement speed")]
-    public float accelerationTimeGounded = 0.1f;    //
+    public float accelerationTimeAirborne = 0.2f;   // How long before the player reaches full speed in mid air
+    [TooltipAttribute("How much gliding acceleration before the player reaches max glide speed")]
+    public float accelerationTimeGliding = 0.4f;    // How long before the player reaches full speed gliding in air
+    [TooltipAttribute("How much ground acceleration needed before player reaches max ground movement speed.")]
+    public float accelerationTimeGounded = 0.1f;    // How long vefore the player can move full speed on the ground
 
     [Space(10)]
     [Header("Lumi Wall Jumping")]
@@ -59,18 +61,21 @@ public class LumiController : MonoBehaviour
     
 
 
+    // Reference to the base 2D controller
+    [HideInInspector]
+    public Base2DController _playerController;
+
 
     // Private variables
     // Stores Lumi's velocity
     private Vector3 _lumiVelocity;            // Stores the current velocity
 
-    // Reference to the base 2D controller
-    private Base2DController _playerController;
 
     // Defines gravity and jump Velocity
     private float _maxJumpVelocity;     // Defines the jump velocity for Lumi
     private float _minJumpVelocity;     // Defines the min jump velocity
     private float _gravity;             // The gravity for Lumi 
+
 
     // Helps smooth out the x axis
     private float _velocityXSmoothing;
@@ -78,7 +83,10 @@ public class LumiController : MonoBehaviour
     // Defines Lumi's input
     private Vector2 _directionalInput;
 
+    // Gameplay checks
     private bool wallSliding;           // If the player is wall sliding
+    private bool _canGlide;             // CHecks weather the player can glide
+
     private int wallDirX;               // Defines the wall direction x
 
     // Defines wall jumping and unsticking
@@ -100,6 +108,7 @@ public class LumiController : MonoBehaviour
     {
         if (wallSliding && canWallJump)
         {
+
             // wall Jump Climb - Mega man X/SMB Styled
             if (wallDirX == _directionalInput.x && canWallJumpClimb)
             {
@@ -140,11 +149,35 @@ public class LumiController : MonoBehaviour
        }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void onJumpInputUp()
     {
         if (_lumiVelocity.y > _minJumpVelocity)
         {
             _lumiVelocity.y = _minJumpVelocity;
+        }
+
+        // Player cannot glide yet
+        _canGlide = false;
+    }
+
+    /// <summary>
+    /// gliding:
+    /// 
+    /// If player is holding jump in mid air after letting go of the jump key, they can glide.
+    /// 
+    /// gliding is calculates msking the _lumiVelocity.y = _minJumpVelocity / (Some value to allow gliding)
+    /// </summary>
+    public void onJumpGlide()
+    {
+        // If the player is in the air
+        //  Not colliding with ground or celing or any walls
+        if (!_playerController.collisions.above && !_playerController.collisions.below 
+            && !_playerController.collisions.left && !_playerController.collisions.right)
+        {
+            _canGlide = true;
         }
     }
 
@@ -160,13 +193,28 @@ public class LumiController : MonoBehaviour
         _gravity =  -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         _maxJumpVelocity = Mathf.Abs(_gravity * timeToJumpApex);
         _minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(_gravity) * minJumpHeight);
+
+        // Player defaults to not being able to glide
+        _canGlide = false;
     }
 
     private void Update()
     {
-        // Calculates the player velocity
-        calculateVelocity();
+        if (!_canGlide)
+        {
+            // Calculates the player velocity
+            calculateVelocity();
+        }
+        // Checks to see if the player can glide in real time
+        // If the player can glide (they're holding the jump key mid air
+        else
+        {
+            // Calculates gliding velocity
+            calculateGLideVelocity();
 
+            // Slow their decent by applying upward force to the velocity
+            _lumiVelocity.y = -(_lumiVelocity.y + 4);
+        }
         // Checks if the player can wall slide
         HandleWallSliding();
 
@@ -189,7 +237,14 @@ public class LumiController : MonoBehaviour
             {
                 _lumiVelocity.y = 0;
             }
+
+            // The player cannot glide
+            _canGlide = false;
+
         }
+
+       
+        // Check if the player has released the jump key
 
     }
 
@@ -252,5 +307,13 @@ public class LumiController : MonoBehaviour
             (_playerController.collisions.below) ? accelerationTimeGounded : accelerationTimeAirborne);
         // Applies gravity every frame
         _lumiVelocity.y += _gravity * Time.deltaTime;
+    }
+    
+    private void calculateGLideVelocity()
+    {
+        // updates lumi's velocity to the input of the player
+        float targetVelocityX = _directionalInput.x * moveSpeed;
+        _lumiVelocity.x = Mathf.SmoothDamp(_lumiVelocity.x, targetVelocityX, ref _velocityXSmoothing,
+            (_playerController.collisions.below) ? accelerationTimeGounded : accelerationTimeGliding);
     }
 }
