@@ -56,9 +56,33 @@ public class PlayerShooterController : RaycastController
     // Checks if the player is invulnerable or not
     private bool _invulnerable;
 
+    /* -------------------- */
+    // Public class methods
+    /* -------------------- */
 
+    /// <summary>
+    /// Controls the player firing fairy magic
+    /// </summary>
+    /// <param name="fireDirection"></param>
+    public void fireFairy(float fireDirection)
+    {
+        GameObject projClone;
+    }
+
+    /// <summary>
+    /// Controls the player firing witch magic
+    /// </summary>
+    /// <param name="fireDirection"></param>
+    public void fireWitch(float fireDirection)
+    {
+
+    }
+
+    
+    /* -------------------- */
     // Private class methods
-
+    /* -------------------- */
+           
 	// Use this for initialization
 	protected override void Start ()
     {
@@ -70,6 +94,9 @@ public class PlayerShooterController : RaycastController
 
         // Sets the default state of the player's invulerability
         _invulnerable = false;
+
+        // Initializes the player sprite renderer
+        //_sprite = GetComponent<SpriteRenderer>();
         
 
 	}

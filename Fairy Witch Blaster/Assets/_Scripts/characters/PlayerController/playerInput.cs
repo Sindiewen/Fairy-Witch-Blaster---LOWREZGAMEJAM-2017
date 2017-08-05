@@ -7,6 +7,9 @@ public class playerInput : MonoBehaviour
     // private Variables
     private LumiController _player;             // Reference to the player Input
     private PlayerShooterController _shooter;   // player shooter reference
+
+    private SpriteRenderer _sprite;             // Reference to the player sprite renderer
+
     
 
     // Defines the playe rinput
@@ -30,8 +33,11 @@ public class playerInput : MonoBehaviour
     {
         // Gets the component for player input
         _player = GetComponent<LumiController>();
+        _shooter = GetComponent<PlayerShooterController>();
 
-        //  new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        // Initializes componenets
+        _sprite = GetComponent<SpriteRenderer>();   // Initializes the sprite renderer
+
     }
 
     private void Update()
@@ -46,6 +52,7 @@ public class playerInput : MonoBehaviour
         // Defines firing
         _firingFairy = Input.GetButtonDown(_fire_Fairy);
         _firingWitch = Input.GetButtonDown(_fire_Witch);
+
 
 
         ///
@@ -84,11 +91,13 @@ public class playerInput : MonoBehaviour
         {
             // Player moving right
             print("Moving Right");
+            _sprite.flipX = false;
         }
         if (_player._lumiVelocity.x < 0)
         {
             // player moving left
             print("Moving Left");
+            _sprite.flipX = true;
         }
     }
 }
