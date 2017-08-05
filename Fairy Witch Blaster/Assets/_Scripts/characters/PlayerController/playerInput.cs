@@ -86,7 +86,7 @@ public class playerInput : MonoBehaviour
         }
         
 
-        // Controls player firing
+        // Controls player sprite
         if (_player._lumiVelocity.x > 0)
         {
             // Player moving right
@@ -98,6 +98,13 @@ public class playerInput : MonoBehaviour
             // player moving left
             print("Moving Left");
             _sprite.flipX = true;
+        }
+        
+        // Controls player firing
+        if (_firingFairy)
+        {
+            // If the player fires the fairy magic, shoot the magic
+            _shooter.fireFairy();
         }
     }
 }

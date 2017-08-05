@@ -64,9 +64,13 @@ public class PlayerShooterController : RaycastController
     /// Controls the player firing fairy magic
     /// </summary>
     /// <param name="fireDirection"></param>
-    public void fireFairy(float fireDirection)
+    public void fireFairy()
     {
+        // Stores reference to the projectile clone
         GameObject projClone;
+        
+        // Instantiates the projectile clone
+        projClone = Instantiate(fairyProjectile, this.transform.position, Quaternion.identity) as GameObject;
     }
 
     /// <summary>
