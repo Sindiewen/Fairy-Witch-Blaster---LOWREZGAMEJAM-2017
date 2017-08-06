@@ -54,11 +54,13 @@ public class PlayerShooterController : RaycastController
 
 
     // Private class variables
-    // Checks if the player is invulnerable or not
-    private bool _invulnerable;
+    private bool _invulnerable;     // Checks if the player is invulnerable or not
+    private bool _canMagic;         // can cast magic
+    
 
     // Gets the lumicontroller for velocity
     private LumiController _lumi;
+
 
     /* -------------------- */
     // Public class methods
@@ -70,26 +72,32 @@ public class PlayerShooterController : RaycastController
     /// <param name="fireDirection"></param>
     public void fireFairy(bool facingRight)
     {
-        // Stores reference to the projectile clone
-        Lumi_Projectile_Controller projClone;
-
-        // Creates temp speed value for manipulation
-        float projSPeed = projFireSpeed;
-        
-        // Instantiates the projectile clone
-        projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
-
-        // If facing left
-        if (!facingRight)
+        if (_canMagic)
         {
-            // Sets the direction and speed of the projectile
-            // Sets the firespeed to go left
-            projSPeed *= -1;
+            // Stores reference to the projectile clone
+            Lumi_Projectile_Controller projClone;
+
+            // Creates temp speed value for manipulation
+            float projSPeed = projFireSpeed;
+            
+            // Instantiates the projectile clone
+            projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+
+            // If facing left
+            if (!facingRight)
+            {
+                // Sets the direction and speed of the projectile
+                // Sets the firespeed to go left
+                projSPeed *= -1;
+            }
+
+            // Sets the projectile values
+            projClone.setProjectileFiringValues(projSPeed);
+            
+
+            // Decrement your mana
+            playerMana--;
         }
-
-        // Sets the projectile values
-        projClone.setProjectileFiringValues(projSPeed);
-
     }
 
     /// <summary>
@@ -98,26 +106,33 @@ public class PlayerShooterController : RaycastController
     /// <param name="fireDirection"></param>
     public void fireWitch(bool facingRight)
     {
-        // Stores reference to the projectile clone
-        Lumi_Projectile_Controller projClone;
-
-        // Creates temp speed value for manipulation
-        float projSPeed = projFireSpeed;
-
-        // Instantiates the projectile clone
-        projClone = Instantiate(witchProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
-
-        // If facing left
-        if (!facingRight)
+        if (_canMagic)
         {
-            // Sets the direction and speed of the projectile
-            // Sets the firespeed to go left
-            projSPeed *= -1;
+            // Stores reference to the projectile clone
+            Lumi_Projectile_Controller projClone;
+
+            // Creates temp speed value for manipulation
+            float projSPeed = projFireSpeed;
+
+            // Instantiates the projectile clone
+            projClone = Instantiate(witchProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+
+            // If facing left
+            if (!facingRight)
+            {
+                // Sets the direction and speed of the projectile
+                // Sets the firespeed to go left
+                projSPeed *= -1;
+            }
+
+            // Sets the projectile values
+            projClone.setProjectileFiringValues(projSPeed);
+
+            // Decrement your mana
+            playerMana--;
+
+
         }
-
-        // Sets the projectile values
-        projClone.setProjectileFiringValues(projSPeed);
-
     }
 
 
@@ -136,6 +151,9 @@ public class PlayerShooterController : RaycastController
 
         // Sets the default state of the player's invulerability
         _invulnerable = false;
+
+        // player defaults to can cast magic
+        _canMagic = true;
 	}
 	
 	// Update is called once per frame
@@ -156,6 +174,13 @@ public class PlayerShooterController : RaycastController
         if (playerHealth <= 0)
         {
             gameOver();
+        }
+        
+        // If the mana is less than 0,
+        //  player can't cast their magic anymore
+        if (playerMana <= 0)
+        {
+            _canMagic = false;
         }
         
 	}

@@ -82,6 +82,8 @@ public class playerInput : MonoBehaviour
         // Sets the direcional input of the player
         _player.SetDirecionalInput(_directionalInput);
 
+        // Changes animation state to correspong to walking
+        _anim.SetFloat("anim_isWalking", _player._lumiVelocity.x);
 
         // If the player is grounded, initialize animation states
         if (_player._playerController.collisions.below)
@@ -138,8 +140,7 @@ public class playerInput : MonoBehaviour
             _sprite.flipX = true;
         }
 
-        // Changes animation state to correspong to walking
-        _anim.SetFloat("anim_isWalking", _player._lumiVelocity.x);
+        
 
         // Changes the fire location according if the player is facing left or right
         fireLoc.changeShootingDirection(_facingRight);
