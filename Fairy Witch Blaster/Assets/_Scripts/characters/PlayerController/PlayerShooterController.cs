@@ -40,6 +40,9 @@ public class PlayerShooterController : RaycastController
 
 
     [HeaderAttribute("Projectile Values")]
+    [TooltipAttribute("Location to fire the projectile")]
+    public Transform projectileSpawnLocation;               // Location to spawn the projectile
+
     [TooltipAttribute("Stores the object for the player's fairy magic")]
     public Lumi_Projectile_Controller fairyProjectile;      // Reference to the game object for the fairy projectile
     [TooltipAttribute("Stores the object for the player's witch magix")]
@@ -74,7 +77,7 @@ public class PlayerShooterController : RaycastController
         float projSPeed = projFireSpeed;
         
         // Instantiates the projectile clone
-        projClone = Instantiate(fairyProjectile, this.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+        projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
 
         // If facing left
         if (!facingRight)
@@ -102,7 +105,7 @@ public class PlayerShooterController : RaycastController
         float projSPeed = projFireSpeed;
 
         // Instantiates the projectile clone
-        projClone = Instantiate(witchProjectile, this.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+        projClone = Instantiate(witchProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
 
         // If facing left
         if (!facingRight)
