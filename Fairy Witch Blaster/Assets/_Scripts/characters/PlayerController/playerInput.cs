@@ -24,6 +24,9 @@ public class playerInput : MonoBehaviour
     private bool _isGliding;    // Checks if the player is gliding or not
     private bool _firingFairy;
     private bool _firingWitch;
+
+    // Stores the facing direction
+    private bool _facingRight;
     
 
 
@@ -37,6 +40,9 @@ public class playerInput : MonoBehaviour
 
         // Initializes componenets
         _sprite = GetComponent<SpriteRenderer>();   // Initializes the sprite renderer
+
+        // initializes the facing direction
+        _facingRight = true;
 
     }
 
@@ -91,12 +97,14 @@ public class playerInput : MonoBehaviour
         {
             // Player moving right
             print("Moving Right");
+            _facingRight = true;
             _sprite.flipX = false;
         }
         if (_player._lumiVelocity.x < 0)
         {
             // player moving left
             print("Moving Left");
+            _facingRight = false;
             _sprite.flipX = true;
         }
         
@@ -104,7 +112,14 @@ public class playerInput : MonoBehaviour
         if (_firingFairy)
         {
             // If the player fires the fairy magic, shoot the magic
-            _shooter.fireFairy();
+            _shooter.fireFairy(_facingRight);
+        }
+
+        // if player is fiuring witch magic
+        if (_firingWitch)
+        {
+            // fires witch magic
+            _shooter.fireWitch(_facingRight);
         }
     }
 }

@@ -174,6 +174,7 @@ public class LumiController : MonoBehaviour
     /// </summary>
     public void onJumpGlide()
     {
+        
         // If the player is in the air
         //  Not colliding with ground or celing or any walls
         if (!_playerController.collisions.above && !_playerController.collisions.below 
@@ -181,6 +182,7 @@ public class LumiController : MonoBehaviour
         {
             _canGlide = true;
         }
+        
     }
 
 

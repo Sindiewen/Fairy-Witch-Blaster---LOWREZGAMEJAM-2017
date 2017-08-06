@@ -41,20 +41,21 @@ public class PlayerShooterController : RaycastController
 
     [HeaderAttribute("Projectile Values")]
     [TooltipAttribute("Stores the object for the player's fairy magic")]
-    public GameObject fairyProjectile;      // Reference to the game object for the fairy projectile
+    public Lumi_Projectile_Controller fairyProjectile;      // Reference to the game object for the fairy projectile
     [TooltipAttribute("Stores the object for the player's witch magix")]
-    public GameObject witchProjectile;      // Reference to the game ovject for the witch projectile
+    public Lumi_Projectile_Controller witchProjectile;      // Reference to the game ovject for the witch projectile
 
     [Space(10)]
-    [TooltipAttribute("Speed value for the fairy projectile")]
-    public float fairyProjFireSpeed;
-    [TooltipAttribute("Speed value for the Witch Projectile")]
-    public float witchProjFireSpeed;
+    [TooltipAttribute("Speed value for the projectile")]
+    public float projFireSpeed;
 
 
     // Private class variables
     // Checks if the player is invulnerable or not
     private bool _invulnerable;
+
+    // Gets the lumicontroller for velocity
+    private LumiController _lumi;
 
     /* -------------------- */
     // Public class methods
@@ -64,31 +65,65 @@ public class PlayerShooterController : RaycastController
     /// Controls the player firing fairy magic
     /// </summary>
     /// <param name="fireDirection"></param>
-    public void fireFairy()
+    public void fireFairy(bool facingRight)
     {
         // Stores reference to the projectile clone
-        GameObject projClone;
+        Lumi_Projectile_Controller projClone;
+
+        // Creates temp speed value for manipulation
+        float projSPeed = projFireSpeed;
         
         // Instantiates the projectile clone
-        projClone = Instantiate(fairyProjectile, this.transform.position, Quaternion.identity) as GameObject;
+        projClone = Instantiate(fairyProjectile, this.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+
+        // If facing left
+        if (!facingRight)
+        {
+            // Sets the direction and speed of the projectile
+            // Sets the firespeed to go left
+            projSPeed *= -1;
+        }
+
+        // Sets the projectile values
+        projClone.setProjectileFiringValues(projSPeed);
+
     }
 
     /// <summary>
     /// Controls the player firing witch magic
     /// </summary>
     /// <param name="fireDirection"></param>
-    public void fireWitch(float fireDirection)
+    public void fireWitch(bool facingRight)
     {
+        // Stores reference to the projectile clone
+        Lumi_Projectile_Controller projClone;
+
+        // Creates temp speed value for manipulation
+        float projSPeed = projFireSpeed;
+
+        // Instantiates the projectile clone
+        projClone = Instantiate(witchProjectile, this.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+
+        // If facing left
+        if (!facingRight)
+        {
+            // Sets the direction and speed of the projectile
+            // Sets the firespeed to go left
+            projSPeed *= -1;
+        }
+
+        // Sets the projectile values
+        projClone.setProjectileFiringValues(projSPeed);
 
     }
 
-    
+
     /* -------------------- */
     // Private class methods
     /* -------------------- */
-           
-	// Use this for initialization
-	protected override void Start ()
+
+    // Use this for initialization
+    protected override void Start ()
     {
         base.Start();
 
@@ -98,11 +133,6 @@ public class PlayerShooterController : RaycastController
 
         // Sets the default state of the player's invulerability
         _invulnerable = false;
-
-        // Initializes the player sprite renderer
-        //_sprite = GetComponent<SpriteRenderer>();
-        
-
 	}
 	
 	// Update is called once per frame
@@ -165,7 +195,6 @@ public class PlayerShooterController : RaycastController
                     print("hit hazard");
 
                     playerHealth = 0;
-                    healthBar.value = playerHealth;
                 }
             }
            
@@ -188,6 +217,11 @@ public class PlayerShooterController : RaycastController
     private void gameOver()
     {
         // TODO: kill player, game over screen, respawn player after button press
+
+        // sets the health bar to 0
+        healthBar.value = playerHealth;
+
+        // disables the character 
         gameObject.SetActive(false);
     }
 }
