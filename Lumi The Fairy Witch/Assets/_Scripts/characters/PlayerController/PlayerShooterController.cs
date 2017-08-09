@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
 /// 2D Shooter controller for the player
@@ -33,6 +34,10 @@ public class PlayerShooterController : RaycastController
     [TooltipAttribute("Stores the player's current mana")]
     [RangeAttribute(0, 20)]
     public int playerMana = 20;             // Stores the player's mana
+    [TooltipAttribute("How long in seconds to regenerate the player mana")]
+    public float manaRegenRate = 1.0f;      // How long per second to regen mana
+    [TooltipAttribute("How much to regen mana per second")]
+    public int manaRegenAmmount = 1;   // How much mana to regen persecond
 
     [Space(10)]
     [TooltipAttribute("How long the player will be invulnerable")]
@@ -59,7 +64,7 @@ public class PlayerShooterController : RaycastController
     
 
     // Gets the lumicontroller for velocity
-    private LumiController _lumi;
+    //private LumiController _lumi;
 
 
     /* -------------------- */
@@ -154,6 +159,9 @@ public class PlayerShooterController : RaycastController
 
         // player defaults to can cast magic
         _canMagic = true;
+
+        // Starts coroutine to start the mana regeneration process imediately
+        StartCoroutine("manaRegen");
 	}
 	
 	// Update is called once per frame
@@ -181,6 +189,10 @@ public class PlayerShooterController : RaycastController
         if (playerMana <= 0)
         {
             _canMagic = false;
+        }
+        else // The player can cast magic
+        {
+            _canMagic = true;
         }
         
 	}
@@ -251,5 +263,30 @@ public class PlayerShooterController : RaycastController
 
         // disables the character 
         gameObject.SetActive(false);
+    }
+    
+    /// <summary>
+    /// Coroutuine for renerating mana.
+    /// 
+    /// Every second, regen mana
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator manaRegen()
+    { 
+        // Always runs, loops forever
+        while (true)
+        {
+            // If the player mana is less than 20
+            //  Regenerate the mana by ammount for a set ammount of time
+            if (playerMana < 20)
+            {
+                playerMana += manaRegenAmmount;
+                yield return new WaitForSeconds(manaRegenRate);
+            }
+            else // If the mana is greater than max, just yield
+            {
+                yield return null;
+            }
+        }
     }
 }
