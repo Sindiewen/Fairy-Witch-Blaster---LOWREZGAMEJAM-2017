@@ -9,6 +9,9 @@ public class playerInput : MonoBehaviour
     [TooltipAttribute("The location to fire the magic")]
     public ProjectileFireLocationController fireLoc;
 
+    [HeaderAttribute("Main camera object")]
+    public CameraFollow mainCamera;
+
     // private Variables
     private LumiController _player;             // Reference to the player Input
     private PlayerShooterController _shooter;   // player shooter reference
@@ -21,7 +24,7 @@ public class playerInput : MonoBehaviour
     
 
     // Defines the playe rinput
-    Vector2 _directionalInput;          // Defines the horizontal and vertial movement of the player
+    private Vector2 _directionalInput;          // Defines the horizontal and vertial movement of the player
 
     private string _jumpKey = "Jump";   // Defines the jump key used for jumping
     private string _fire_Fairy = "Fire_Fairy";
@@ -52,6 +55,7 @@ public class playerInput : MonoBehaviour
 
         // initializes the facing direction
         _facingRight = true;
+        mainCamera.facingRight = true;
 
     }
 
@@ -78,6 +82,7 @@ public class playerInput : MonoBehaviour
 
         // Sets the direcional input of the player
         _player.SetDirecionalInput(_directionalInput);
+        mainCamera.directionalInput = _directionalInput;
 
         // Changes animation state to correspong to walking
         _anim.SetFloat("anim_isWalking", _directionalInput.x);
@@ -126,17 +131,18 @@ public class playerInput : MonoBehaviour
         if (_directionalInput.x > 0)
         {
             // Player moving right
-            print("Moving Right");
             _facingRight = true;
             _sprite.flipX = false;
         }
         if (_directionalInput.x < 0)
         {
             // player moving left
-            print("Moving Left");
             _facingRight = false;
             _sprite.flipX = true;
         }
+
+        /// Updates the camera if the player is facing right or not
+        mainCamera.facingRight = _facingRight;
 
         
 

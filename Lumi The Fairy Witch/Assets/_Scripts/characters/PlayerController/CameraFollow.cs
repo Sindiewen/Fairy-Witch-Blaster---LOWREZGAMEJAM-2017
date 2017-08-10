@@ -30,12 +30,32 @@ public class CameraFollow : MonoBehaviour
         /// 
         /// </summary>
         /// <param name="targetBounds"></param>
-        public void Update(Bounds targetBounds)
+        public void Update(Bounds targetBounds, bool facingRight, Vector2 directionalInput)
         {
             // Creates the bounds for the x axsis
             float shiftX = 0;
 
-            // CHecks if target is moving against the left or right edge
+            /*
+            if (targetBounds.min.x < left && directionalInput.x > 0.1f)
+            {
+                shiftX = targetBounds.min.x - left;
+            }
+            else if (targetBounds.max.x > right && directionalInput.x < -0.1f)
+            {
+                shiftX = targetBounds.max.x - right;
+            }
+
+            else if (facingRight && directionalInput.x == 0)
+            {
+                shiftX = targetBounds.min.x - left;
+            }
+            else if (!facingRight && directionalInput.x == 0)
+            {
+                shiftX = targetBounds.max.x - right;
+            }*/
+
+            
+            // Checks if target is moving against the left or right edge
             if (targetBounds.min.x < left)
             {
                 shiftX = targetBounds.min.x - left;
@@ -45,11 +65,12 @@ public class CameraFollow : MonoBehaviour
                 shiftX = targetBounds.max.x - right;
             }
 
+
             left += shiftX;
             right += shiftX;
 
 
-            // Creates the bounds for the x axsis
+            // Creates the bounds for the y axsis
             float shiftY = 0;
 
             // CHecks if target is moving against the top of bottom edge
@@ -83,28 +104,42 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("Vertical offset for the camera follow")]
     public float verticalOffset;            // vertical offset
 
-    [Tooltip("Distance to look ahead to on the x axis")]
+    [Tooltip("Distance to look ahead to on the x and y axis")]
     public float lookAheadDstX;
+    public float lookAheadDstY;
+    public bool canYLookAhead;
     [Tooltip("smoothing time")]
     public float lookSmoothTimeX;
+    public float lookSmoothTimeY;
     [Tooltip("Vertical smothing time")]
     public float verticalSmoothTime;
 
     [Tooltip("How big the focus area for following the camera will be")]
     public Vector2 focusAreaSize;           // Focus Area to focus on the object to follow
 
+    // If the player is facing right
+    [HideInInspector]
+    public bool facingRight;
+
+    [HideInInspector]
+    public Vector2 directionalInput;
 
     // Private variables
     FocusArea focusArea;                // Creates an object of the focusArea for the camera follow
 
     // Private values for cameramovement
     private float currentLookAheadX;    // The current ammount the camera is looking ahead
+    private float currentLookAheadY;
     private float targetLookAheadX;     // The target's lookahead x value to look towards
+    private float targetLookAheadY = 0;
     private float lookAheadDirX;        // The direction to move the camera towards
+    //private float lookAheadDirY = 0;
     private float smoothLookVelocityX;  // The velocity for looking smoothly
+    private float smoothLookVelocityY;
     private float smoothVelocityY;      // The smooth velocity in the y axis
 
-    private bool lookAheadStopped;  
+    private bool lookAheadStopped;
+
 
 
     // Private class Methods
@@ -123,7 +158,7 @@ public class CameraFollow : MonoBehaviour
     private void LateUpdate()
     {
         // Calling the focus area update with the target's bounds
-        focusArea.Update(target._boxCol.bounds);
+        focusArea.Update(target._boxCol.bounds, facingRight, directionalInput);
 
         // Defines the focus area posiion
         Vector2 focusPosition = focusArea.center + Vector2.up * verticalOffset;
@@ -134,7 +169,7 @@ public class CameraFollow : MonoBehaviour
         {
             lookAheadDirX = Mathf.Sign(focusArea.velocity.x);
 
-            // For smoothing out camera when dealing with lkeft and right player input
+            // For smoothing out camera when dealing with left and right player input
             if (Mathf.Sign(target._playerInput.x) == Mathf.Sign(focusArea.velocity.x) && target._playerInput.x != 0)
             {
                 lookAheadStopped = false;
@@ -152,9 +187,35 @@ public class CameraFollow : MonoBehaviour
             }
         }
 
+        /*
+        // Look ahead y
+        // velocity of focus area of the y axis is not 0
+        //  Set look ahead direction equal to the sign of focusArea.velocity.x
+        if (focusArea.velocity.y != 0 && canYLookAhead)
+        {
+            lookAheadDirY = Mathf.Sign(focusArea.velocity.y);
+
+            // For smoothing out camera when dealing with left and right player input
+            if (Mathf.Sign(target._playerInput.y) == Mathf.Sign(focusArea.velocity.y) && target._playerInput.y != 0)
+            {
+                lookAheadStopped = false;
+
+                // Sets target look ahead to the full ammount
+                targetLookAheadY = lookAheadDirY * lookAheadDstY;
+            }
+            else
+            {
+                if (!lookAheadStopped)
+                {
+                    lookAheadStopped = true;
+                    targetLookAheadY = currentLookAheadY + (lookAheadDirY * lookAheadDstY - currentLookAheadY) / 4;
+                }
+            }
+        }*/
 
         // Sets the current lookahead X
         currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
+        currentLookAheadY = Mathf.SmoothDamp(currentLookAheadY, targetLookAheadY, ref smoothLookVelocityY, lookSmoothTimeY);
 
         // Y smoothing
         focusPosition.y = Mathf.SmoothDamp(transform.position.y, focusPosition.y, ref smoothVelocityY, verticalSmoothTime);

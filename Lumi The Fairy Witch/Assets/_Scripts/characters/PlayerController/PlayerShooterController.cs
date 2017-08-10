@@ -216,9 +216,8 @@ public class PlayerShooterController : RaycastController
             {
                 // If the box cast it an eligable object
                 // Enemy, projectile
-                if (hit.collider.tag == "Enemy_Projectile")
+                if (hit.collider.tag == "Enemy_Projectile" || hit.collider.tag == "Enemy")
                 {
-                    print("hit projectile");
                     // subtract 1 from the player health
                     playerHealth--;
 
@@ -232,8 +231,6 @@ public class PlayerShooterController : RaycastController
                 // If the player has hit an instakil hazard (spikes, water, pitfalls)
                 if (hit.collider.tag == "Hazard_Instakill")
                 {
-                    print("hit hazard");
-
                     playerHealth = 0;
                 }
             }
