@@ -62,6 +62,9 @@ public class GoblinController : RaycastController
 
     private void FixedUpdate()
     {
+        // Sets the player to be not invulnerable
+        //_invulnerable = false;
+
         // Gets the current origin of the raycast
         rayOrigin = transform.position;
 
@@ -130,15 +133,11 @@ public class GoblinController : RaycastController
             if (hit.collider.tag == "Lumi_Projectile")
             {
                 playerHealth--;
-                _invulnerable = false;
-            }
+                _invulnerable = true;
 
-            /// If the enemy hit a hazard, subtract health
-            /// 
+                Invoke("resetInvulnerability", 0.05f);
+            }
         }
-        
-        
-        
     }
 
     private void OnDrawGizmos()

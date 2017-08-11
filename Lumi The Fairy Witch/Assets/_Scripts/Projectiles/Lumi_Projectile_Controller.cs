@@ -7,7 +7,6 @@ public class Lumi_Projectile_Controller : MonoBehaviour
 {
     // public variables
     public LayerMask collisionMask;
-    //public PlayerShooterController shooter;
 
 	// Private variables
 
@@ -27,7 +26,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         Invoke("destroyProjectile", 0.5f);
 	}
 	
-	void Update()
+	void FixedUpdate()
 	{
         // Gives the projectile velocity of the player in the x direction * speed	
         this.transform.Translate((Vector2.right) * Time.deltaTime * _projectileSpeed);
@@ -79,7 +78,6 @@ public class Lumi_Projectile_Controller : MonoBehaviour
 
     public void destroyProjectile()
     {
-        //shooter.numProjectilesOnScreen--;
         Destroy(this.gameObject);
     }
 
