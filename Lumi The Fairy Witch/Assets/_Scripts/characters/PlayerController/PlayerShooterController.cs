@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -58,9 +59,14 @@ public class PlayerShooterController : RaycastController
     public float projFireSpeed;
 
 
+    // Stores the number of projectiles the player has shot currently
+    public int numProjectilesOnScreen;
+
     // Private class variables
     private bool _invulnerable;     // Checks if the player is invulnerable or not
     private bool _canMagic;         // can cast magic
+
+    
     
 
     // Gets the lumicontroller for velocity
@@ -77,7 +83,7 @@ public class PlayerShooterController : RaycastController
     /// <param name="fireDirection"></param>
     public void fireFairy(bool facingRight)
     {
-        if (_canMagic)
+        if (_canMagic && numProjectilesOnScreen < 3)
         {
             // Stores reference to the projectile clone
             Lumi_Projectile_Controller projClone;
@@ -87,6 +93,7 @@ public class PlayerShooterController : RaycastController
             
             // Instantiates the projectile clone
             projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+
 
             // If facing left
             if (!facingRight)
@@ -102,6 +109,10 @@ public class PlayerShooterController : RaycastController
 
             // Decrement your mana
             playerMana--;
+
+            // Increase number of projectiles on screen
+            numProjectilesOnScreen++;
+
         }
     }
 
@@ -111,7 +122,7 @@ public class PlayerShooterController : RaycastController
     /// <param name="fireDirection"></param>
     public void fireWitch(bool facingRight)
     {
-        if (_canMagic)
+        if (_canMagic && numProjectilesOnScreen < 3)
         {
             // Stores reference to the projectile clone
             Lumi_Projectile_Controller projClone;
@@ -136,7 +147,8 @@ public class PlayerShooterController : RaycastController
             // Decrement your mana
             playerMana--;
 
-
+            // Increase number of projectiles on screen
+            numProjectilesOnScreen++;
         }
     }
 
@@ -162,15 +174,20 @@ public class PlayerShooterController : RaycastController
 
         // Starts coroutine to start the mana regeneration process imediately
         StartCoroutine("manaRegen");
+
+        // Creates a starting ammount of projectiles
+        numProjectilesOnScreen = 0;
 	}
 	
 	// Update is called once per frame
-	private void Update ()
+	private void FixedUpdate ()
     {
         // Updates the player health and mana bars
         healthBar.value = playerHealth;
         manaBar.value = playerMana;
 
+        // Updates how many projectiles are in the game world
+        numProjectilesOnScreen = GameObject.FindGameObjectsWithTag("Lumi_Projectile").Length;
 
         // Calculates the player's box collisions
         playerBoxCollisions();
@@ -194,7 +211,7 @@ public class PlayerShooterController : RaycastController
         {
             _canMagic = true;
         }
-        
+
 	}
 
 
@@ -261,6 +278,7 @@ public class PlayerShooterController : RaycastController
         // disables the character 
         gameObject.SetActive(false);
     }
+
     
     /// <summary>
     /// Coroutuine for renerating mana.

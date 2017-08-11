@@ -11,36 +11,38 @@ public class GoblinController : RaycastController
 {
     // Public variables
 
-    [HeaderAttribute("Player Stat attributes")]
+    [HeaderAttribute("Enemy Stat attributes")]
     public int playerHealth = 5;
-
-    [HeaderAttribute("Determins the direction the goblin will go")]
-    public bool goesRight;
 
     [HeaderAttribute("Toggles weather the goblin will pace back and forth. and how long they'll pace")]
     public bool canPace = false;
     public float timeToPace = 1.0f;
 
 
-    [HeaderAttribute("Determines how big the aggro box will be")]
-    public float aggroBoxSize = 1;      // How big the aggro box size will be
+    [HeaderAttribute("If not pacing, Determines how big the aggro box will be")]
+    public float aggroRaySize = 1;      // How big the aggro box size will be
 
 
     // Private variables
 
+    // Defines enemy movement
+    private EnemyInputManager _enemy;   // Reference to the enemy input manager
+    private Vector2 moveDirection;      // Defines the direction the goblin will move
 
-    private Vector2 moveDirection;       // Defines the direction the goblin will move
-
-    private EnemyInputManager _enemy;
-
+    // Checks if the enemy is invulnerable
     private bool _invulnerable;
 
     // Stores transform values
     // Creates hitbox for the enemy's aggro range
     private Vector2 rayOrigin;     // Origin point of the enemy
 
-    private Vector3 giz_AggroSize;
+    Vector3 gizmoBox;
 
+
+
+    // Protected class methods 
+
+    // Overidded start method
     protected override void Start()
     {
         base.Start();
@@ -56,7 +58,9 @@ public class GoblinController : RaycastController
 
     }
 
-    private void Update()
+    // Private class methods
+
+    private void FixedUpdate()
     {
         // Gets the current origin of the raycast
         rayOrigin = transform.position;
@@ -85,34 +89,40 @@ public class GoblinController : RaycastController
     /// </summary>
     private void enemyBoxCollisions()
     {
-        // Creates boxcast around the player
-        // creating temp value to store the box size
-        Vector2 boxSize = _boxCol.bounds.size;
-        boxSize.x += aggroBoxSize;
-        boxSize.y += aggroBoxSize;
-        giz_AggroSize = boxSize;
+        gizmoBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.1f);
 
+        // Creates 2 raycasts, one for the hitbox, one for the aggrobox.
+        // hit is for collisions with any interactable object
+        // hitAggro is for generating when to aggro with the player
+        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, gizmoBox, 0, new Vector2(0, 0), 0, collisionMask);
+        RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, collisionMask);
+        RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, collisionMask);
 
-        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, _boxCol.bounds.size, 0, new Vector2(0, 0), 0, collisionMask);
-        RaycastHit2D hitAggro = Physics2D.BoxCast(rayOrigin, boxSize, 0, new Vector2(0, 0), 0, collisionMask);
+        
+
+        // Draws debug rays
+        Debug.DrawRay(rayOrigin, Vector2.left * aggroRaySize, Color.blue);
+        Debug.DrawRay(rayOrigin, Vector2.right * aggroRaySize, Color.blue);
 
         // If the box hit anything
-        if (hitAggro && !canPace)
+        //  Move the enemy
+        if (hitAggroLeft && !canPace)
         {
-            if (hitAggro.collider.tag == "Lumi")
+            if (hitAggroLeft.collider.tag == "Lumi")
             {
-                if (goesRight)
-                {
-                    moveDirection.x = 1;
-                }
-                else
-                {
-                    moveDirection.x = -1;
-                }
+                moveDirection.x = -1;
+            }
+            
+        }
+        if (hitAggroRight && !canPace)
+        {
+            if (hitAggroRight.collider.tag == "Lumi")
+            {
+                moveDirection.x = 1;
             }
         }
 
-        
+       
         if (hit)
         {
             /// If the enemy hit lumi projectile, subtract health
@@ -120,9 +130,7 @@ public class GoblinController : RaycastController
             if (hit.collider.tag == "Lumi_Projectile")
             {
                 playerHealth--;
-                _invulnerable = true;
-
-                Invoke("resetInvulnerability", 0.1f);
+                _invulnerable = false;
             }
 
             /// If the enemy hit a hazard, subtract health
@@ -130,6 +138,14 @@ public class GoblinController : RaycastController
         }
         
         
+        
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1, 0, 0, 0.5f);
+
+        Gizmos.DrawCube(rayOrigin, gizmoBox);
     }
 
     private IEnumerator paceGoblin()
@@ -148,14 +164,6 @@ public class GoblinController : RaycastController
         }
     }
 
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = new Color(1, 0, 0, 0.5f);
-
-        Gizmos.DrawCube(rayOrigin, giz_AggroSize);
-    }
-
     /// <summary>
     /// Once called, the player will no longer be invulnerable to hits
     /// 
@@ -165,6 +173,11 @@ public class GoblinController : RaycastController
         _invulnerable = false;
     }
 
+    /// <summary>
+    /// Destroys the enemy once called 
+    /// 
+    /// 
+    /// </summary>
     private void destroyPlayer()
     {
         // TODO: kill animation

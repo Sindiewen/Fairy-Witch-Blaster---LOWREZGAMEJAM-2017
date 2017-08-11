@@ -28,7 +28,4 @@ public class EnemyInputManager : MonoBehaviour
         // Moves the character
         _player.SetDirecionalInput(_directionalInput);
     }
-
-
-    
 }

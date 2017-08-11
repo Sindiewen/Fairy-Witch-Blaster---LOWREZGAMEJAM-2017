@@ -12,6 +12,18 @@ public class playerInput : MonoBehaviour
     [HeaderAttribute("Main camera object")]
     public CameraFollow mainCamera;
 
+    public float verticalOffsetBase;
+    public float vertOffsetJump;
+    public float vertOffsetFall;
+    public float vertOffsetYMax;
+    public float vertOffsetYMin;
+
+    [Space(10)]
+    public float verticalSmoothTimeBase;
+    public float vertSmoothTimeJump;
+    public float vertSmoothTimeFall;
+
+
     // private Variables
     private LumiController _player;             // Reference to the player Input
     private PlayerShooterController _shooter;   // player shooter reference
@@ -55,7 +67,6 @@ public class playerInput : MonoBehaviour
 
         // initializes the facing direction
         _facingRight = true;
-        mainCamera.facingRight = true;
 
     }
 
@@ -82,7 +93,6 @@ public class playerInput : MonoBehaviour
 
         // Sets the direcional input of the player
         _player.SetDirecionalInput(_directionalInput);
-        mainCamera.directionalInput = _directionalInput;
 
         // Changes animation state to correspong to walking
         _anim.SetFloat("anim_isWalking", _directionalInput.x);
@@ -92,6 +102,12 @@ public class playerInput : MonoBehaviour
         if (_player._playerController.collisions.below)
         {
             _anim.SetBool("anim_isGrounded", true);     // Player is grounded
+
+            // when grounded, set the vertical offset to the base
+            mainCamera.verticalOffset = verticalOffsetBase;
+
+            // Sets the base vertical smooth time
+            mainCamera.verticalSmoothTime = verticalSmoothTimeBase;
         }
 
 
@@ -103,6 +119,12 @@ public class playerInput : MonoBehaviour
             _anim.SetBool("anim_isGrounded", false);
 
             _player.onJumpInputDown();
+
+            // When jumping, set the vertical offset so the player can see whats above
+            mainCamera.verticalOffset = vertOffsetJump;
+
+            // When jumping set the vertical smooth time
+            mainCamera.verticalSmoothTime = vertSmoothTimeJump;
         }
         
         // If the player is not pressing the jump key
@@ -116,6 +138,15 @@ public class playerInput : MonoBehaviour
             _anim.SetBool("anim_isGliding", false);
         }
 
+        if (!_jump && _player._lumiVelocity.y < 0)
+        {
+            // When falling, set vertical offset so the player can see below
+            mainCamera.verticalOffset = vertOffsetFall;
+
+            // When falling, set the vertical smooth time
+            mainCamera.verticalSmoothTime = vertSmoothTimeFall;
+        }
+
         // If the player is in the air, and they're pressing the jump key mid air
         if (_jump && _isGliding)
         {
@@ -124,10 +155,14 @@ public class playerInput : MonoBehaviour
 
             // Player is gliding now
             _player.onJumpGlide();
+
+            // When falling, set vertical offset so the player can see below
+            mainCamera.verticalOffset = vertOffsetFall;
         }
         
 
         // Controls player sprite
+        //  Controls camera pointing direction alongside player facing direction
         if (_directionalInput.x > 0)
         {
             // Player moving right
@@ -140,12 +175,19 @@ public class playerInput : MonoBehaviour
             _facingRight = false;
             _sprite.flipX = true;
         }
-
-        /// Updates the camera if the player is facing right or not
-        mainCamera.facingRight = _facingRight;
-
         
-
+        // If the player is pressing up, the camera will move upwards to show whats above
+        if (_directionalInput.y > 0 && !_jump && !_isGliding)
+        {
+            mainCamera.verticalOffset = vertOffsetYMax;
+        }
+        // If the player is pressing down, the camera will move downwards to show whats below
+        if (_directionalInput.y < 0 && !_jump && !_isGliding)
+        {
+            mainCamera.verticalOffset = vertOffsetYMin;
+        }
+       
+        
         // Changes the fire location according if the player is facing left or right
         fireLoc.changeShootingDirection(_facingRight);
 

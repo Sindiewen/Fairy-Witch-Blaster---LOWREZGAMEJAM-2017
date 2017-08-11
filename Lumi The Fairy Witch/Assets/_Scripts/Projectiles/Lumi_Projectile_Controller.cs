@@ -7,6 +7,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
 {
     // public variables
     public LayerMask collisionMask;
+    //public PlayerShooterController shooter;
 
 	// Private variables
 
@@ -23,7 +24,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         _boxCol = GetComponent<BoxCollider2D>();
     
         // Destroys the object after a set amount of time
-        Destroy(this.gameObject, 0.5f);
+        Invoke("destroyProjectile", 0.5f);
 	}
 	
 	void Update()
@@ -71,9 +72,17 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         {
             if (hit.collider.tag == "Enemy" || hit.collider.tag == "Enviroment")
             {
-                Destroy(this.gameObject, 0.001f);
+                destroyProjectile();
             }
         }
     }
+
+    public void destroyProjectile()
+    {
+        //shooter.numProjectilesOnScreen--;
+        Destroy(this.gameObject);
+    }
+
+   
 
 }
