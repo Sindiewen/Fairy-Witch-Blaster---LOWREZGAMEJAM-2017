@@ -6,15 +6,11 @@ using UnityEngine;
 /// 
 /// Passes movement values to the enemyInputManager.cs class to move the enemy.
 /// </summary>
-
+[RequireComponent(typeof (EnemyInputManager))]
 public class GoblinController : RaycastController
 {
     // Public variables
-
-    [HeaderAttribute("Enemy Stat attributes")]
-    public int playerHealth = 5;
-
-    [HeaderAttribute("Toggles weather the goblin will pace back and forth. and how long they'll pace")]
+   [HeaderAttribute("Toggles weather the goblin will pace back and forth. and how long they'll pace")]
     public bool canPace = false;
     public float timeToPace = 1.0f;
 
@@ -26,11 +22,12 @@ public class GoblinController : RaycastController
     // Private variables
 
     // Defines enemy movement
-    private EnemyInputManager _enemy;   // Reference to the enemy input manager
-    private Vector2 moveDirection;      // Defines the direction the goblin will move
+    private EnemyInputManager _enemyInput;  // Reference to the enemy input manager
+    private EnemyBase _enemyBase;           // Defines the enemy base
+    private Vector2 moveDirection;          // Defines the direction the goblin will move
 
     // Checks if the enemy is invulnerable
-    private bool _invulnerable;
+    //private bool _invulnerable;
 
     // Stores transform values
     // Creates hitbox for the enemy's aggro range
@@ -48,10 +45,10 @@ public class GoblinController : RaycastController
         base.Start();
 
         // gets component references
-        _enemy = GetComponent<EnemyInputManager>();
+        _enemyInput = GetComponent<EnemyInputManager>();
 
         // sets invulnerability to false
-        _invulnerable = false;
+        //_invulnerable = false;
 
         // Starts coroutine for pacing the goblin
         StartCoroutine("paceGoblin");
@@ -60,7 +57,7 @@ public class GoblinController : RaycastController
 
     // Private class methods
 
-    private void FixedUpdate()
+    private void Update()
     {
         // Sets the player to be not invulnerable
         //_invulnerable = false;
@@ -70,17 +67,10 @@ public class GoblinController : RaycastController
 
 
         // calculates raycasting
-        enemyBoxCollisions();
+        aggroBoxCollisions();
 
         // Sets the directionalInput to the current move direction
-        _enemy._directionalInput = moveDirection;
-
-
-        // If the health is at 0, destroy player
-        if (playerHealth <= 0)
-        {
-            destroyPlayer();
-        }
+        _enemyInput._directionalInput = moveDirection;
 
     }
 
@@ -90,9 +80,9 @@ public class GoblinController : RaycastController
     /// 
     /// 
     /// </summary>
-    private void enemyBoxCollisions()
+    private void aggroBoxCollisions()
     {
-        gizmoBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.1f);
+        gizmoBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
 
         // Creates 2 raycasts, one for the hitbox, one for the aggrobox.
         // hit is for collisions with any interactable object
@@ -132,10 +122,10 @@ public class GoblinController : RaycastController
             /// 
             if (hit.collider.tag == "Lumi_Projectile")
             {
-                playerHealth--;
-                _invulnerable = true;
+                //playerHealth--;
+                //_invulnerable = true;
 
-                Invoke("resetInvulnerability", 0.05f);
+                //Invoke("resetInvulnerability", 0.05f);
             }
         }
     }
@@ -169,17 +159,6 @@ public class GoblinController : RaycastController
     /// </summary>
     private void resetInvulnerability()
     {
-        _invulnerable = false;
-    }
-
-    /// <summary>
-    /// Destroys the enemy once called 
-    /// 
-    /// 
-    /// </summary>
-    private void destroyPlayer()
-    {
-        // TODO: kill animation
-        Destroy(this.gameObject);
+        //_invulnerable = false;
     }
 }

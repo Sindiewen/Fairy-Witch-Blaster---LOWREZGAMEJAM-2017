@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <Summary>
 ///	Controls the attributes of the projectiles 
@@ -26,7 +28,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         Invoke("destroyProjectile", 0.5f);
 	}
 	
-	void FixedUpdate()
+	void Update()
 	{
         // Gives the projectile velocity of the player in the x direction * speed	
         this.transform.Translate((Vector2.right) * Time.deltaTime * _projectileSpeed);
@@ -67,8 +69,23 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         // Creates boxcast around the player
         RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, _boxCol.bounds.size, 0, new Vector2(0, 0), 0, collisionMask);
 
+        // If the projectile hit a valid raycast
         if (hit)
         {
+            // debug prints the name of the object
+            Debug.Log(hit.transform.name);
+
+            // Gets the component of anything thats of EnemyBase
+            EnemyBase enemy = hit.transform.GetComponent<EnemyBase>();
+
+            // If not null, has enemyBase component
+            if (enemy != null)
+            {
+                // Have the enemy take damage
+                enemy.takeDamage();
+            }
+
+            // If the projectile has hit an enemy or an enviroment, destroy the projectile
             if (hit.collider.tag == "Enemy" || hit.collider.tag == "Enviroment")
             {
                 destroyProjectile();
