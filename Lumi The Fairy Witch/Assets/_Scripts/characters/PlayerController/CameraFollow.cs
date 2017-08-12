@@ -84,17 +84,14 @@ public class CameraFollow : MonoBehaviour
     [HideInInspector]
     [Tooltip("Vertical offset for the camera follow")]
     public float verticalOffset;            // vertical offset
-
-    [HideInInspector]
-    [Tooltip("Distance to look ahead to on the x and y axis")]
-    public float lookAheadDstX;
-    [HideInInspector]
-    [Tooltip("smoothing time")]
-    public float lookSmoothTimeX;
     [HideInInspector]
     [Tooltip("Vertical smothing time")]
     public float verticalSmoothTime;
 
+    [Tooltip("Distance to look ahead to on the x and y axis")]
+    public float lookAheadDstX;
+    [Tooltip("smoothing time")]
+    public float lookSmoothTimeX;
     [Tooltip("How big the focus area for following the camera will be")]
     public Vector2 focusAreaSize;           // Focus Area to focus on the object to follow
 

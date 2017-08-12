@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <Summary>
-///	Controls the attributes of the projectiles 
-/// </Summary>
-public class Lumi_Projectile_Controller : MonoBehaviour
+public class Enemy_Projectile_Controller : MonoBehaviour
 {
     // public variables
     public LayerMask collisionMask;
 
-	// Private variables
+    // Private variables
 
-	private float _projectileSpeed;					// How fast the projectile will fire by time.deltatime and the vector 2 direction
+    private float _projectileSpeed;					// How fast the projectile will fire by time.deltatime and the vector 2 direction
 
     private SpriteRenderer _sprite;                 // Stores reference to the sprite renderer]
 
     private BoxCollider2D _boxCol;
-	
 
-	
+
+    
 
     // Public class methods
 
@@ -46,6 +43,8 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         _projectileSpeed = projFireSpeed;
     }
 
+    // Private class methods
+
     // Use this for initialization
     void Start()
     {
@@ -71,7 +70,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         if (hit)
         {
             // debug prints the name of the object
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
 
             // Gets the component of anything thats of EnemyBase
             EnemyBase enemy = hit.transform.GetComponent<EnemyBase>();
@@ -84,7 +83,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
             }
 
             // If the projectile has hit an enemy or an enviroment, destroy the projectile
-            if (hit.collider.tag == "Enemy" || hit.collider.tag == "Enviroment")
+            if (hit.collider.tag == "Lumi" || hit.collider.tag == "Enviroment")
             {
                 destroyProjectile();
             }
@@ -95,6 +94,5 @@ public class Lumi_Projectile_Controller : MonoBehaviour
     {
         // Projectile is not being deactivated after a certain ammount have been spawned
         this.gameObject.SetActive(false);
-        //Destroy(this.gameObject);
     }
 }

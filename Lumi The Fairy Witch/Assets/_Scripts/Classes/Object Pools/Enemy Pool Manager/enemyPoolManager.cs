@@ -1,25 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
 /// <summary>
-/// Class for the witch projectiles
+/// Creates object pool for projectiles
 /// </summary>
-public class witchPoolManager : MonoBehaviour
+public class enemyPoolManager : MonoBehaviour
 {
     // Static values
-    static witchPoolManager _instance;
+    static enemyPoolManager _instance;
 
     // accessor
-    public static witchPoolManager instance
+    public static enemyPoolManager instance
     {
         get
         {
             if (_instance == null)
             {
                 // find instance of the pool manager script in the scene
-                _instance = FindObjectOfType<witchPoolManager>();
+                _instance = FindObjectOfType<enemyPoolManager>();
             }
             return _instance;
         }
@@ -30,7 +28,7 @@ public class witchPoolManager : MonoBehaviour
 
     // Creates a dictionary
     //  Used for object pooling
-    Dictionary<int, Queue<Lumi_Projectile_Controller>> poolDictionary = new Dictionary<int, Queue<Lumi_Projectile_Controller>>();
+    Dictionary<int, Queue<Enemy_Projectile_Controller>> poolDictionary = new Dictionary<int, Queue<Enemy_Projectile_Controller>>();
 
 
 
@@ -43,7 +41,7 @@ public class witchPoolManager : MonoBehaviour
     /// </summary>
     /// <param name="prefab"></param>
     /// <param name="poolSize"></param>
-    public void CreatePool(Lumi_Projectile_Controller prefab, int poolSize)
+    public void CreatePool(Enemy_Projectile_Controller prefab, int poolSize)
     {
         // Stores the prefab identity - unique int for every game object
         int poolKey = prefab.GetInstanceID();
@@ -52,13 +50,13 @@ public class witchPoolManager : MonoBehaviour
         // If key doesn't exsist, add it into the dictionary
         if (!poolDictionary.ContainsKey(poolKey))
         {
-            poolDictionary.Add(poolKey, new Queue<Lumi_Projectile_Controller>());
+            poolDictionary.Add(poolKey, new Queue<Enemy_Projectile_Controller>());
 
             // Loops through the pool size, instantiatting each object and storing them into the object pool
             for (int i = 0; i < poolSize; i++)
             {
                 // Instantiates prefab
-                Lumi_Projectile_Controller newObject = Instantiate(prefab) as Lumi_Projectile_Controller;
+                Enemy_Projectile_Controller newObject = Instantiate(prefab) as Enemy_Projectile_Controller;
 
                 // Ensures the object is no active when spawned
                 newObject.gameObject.SetActive(false);
@@ -76,7 +74,8 @@ public class witchPoolManager : MonoBehaviour
     /// <param name="prefab"></param>
     /// <param name="position"></param>
     /// <param name="rotation"></param>
-    public void ReuseObject(Lumi_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight, float projFireSpeed , ref int numOfProjectilesOnScreen)
+    public void ReuseObject(Enemy_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight, 
+        float projectileDeaspawnTime, float projFireSpeed)
     {
         // Gets the prefab's instance id
         int poolKey = prefab.GetInstanceID();
@@ -85,7 +84,7 @@ public class witchPoolManager : MonoBehaviour
         if (poolDictionary.ContainsKey(poolKey))
         {
             // Gets next object in pool
-            Lumi_Projectile_Controller objectToReuse = poolDictionary[poolKey].Dequeue();
+            Enemy_Projectile_Controller objectToReuse = poolDictionary[poolKey].Dequeue();
 
             // Adds object back to end of queue
             poolDictionary[poolKey].Enqueue(objectToReuse);
@@ -106,7 +105,7 @@ public class witchPoolManager : MonoBehaviour
             objectToReuse.setProjectileFiringValues(projFireSpeed);
 
             // Disables projectile after a set time
-            objectToReuse.Invoke("destroyProjectile", 0.5f);
+            objectToReuse.Invoke("destroyProjectile", projectileDeaspawnTime);
         }
     }
 }

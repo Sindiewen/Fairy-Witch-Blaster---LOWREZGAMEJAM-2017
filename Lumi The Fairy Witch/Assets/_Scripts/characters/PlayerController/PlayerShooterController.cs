@@ -59,7 +59,11 @@ public class PlayerShooterController : RaycastController
     [TooltipAttribute("Speed value for the projectile")]
     public float projFireSpeed;
 
+    [TooltipAttribute("Max number of projectiles the player can have on screen")]
     public int maxNumProjOnScreen;
+
+    [TooltipAttribute("The time in seconds how long a projectile lasts in the scene before removing it")]
+    public float projectileDespawnTime = 0.5f;
 
     // Stores the number of projectiles the player has shot currently
     public int numProjectilesOnScreen;
@@ -90,7 +94,8 @@ public class PlayerShooterController : RaycastController
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
-            fairyPoolManager.instance.ReuseObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, ref numProjectilesOnScreen);
+            fairyPoolManager.instance.ReuseObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
+            //globalPoolManager.instance.ReuseFairyObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
 
             /*
             // Stores reference to the projectile clone
@@ -143,7 +148,8 @@ public class PlayerShooterController : RaycastController
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
-            witchPoolManager.instance.ReuseObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, ref numProjectilesOnScreen);
+            //witchPoolManager.instance.ReuseObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
+            //globalPoolManager.instance.ReuseWitchObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
 
             /*
             // Stores reference to the projectile clone
@@ -189,6 +195,8 @@ public class PlayerShooterController : RaycastController
         //  Creates pool for the player projectiles
         fairyPoolManager.instance.CreatePool(fairyProjectile, 5);
         witchPoolManager.instance.CreatePool(witchProjectile, 5);
+        //globalPoolManager.instance.CreateFairyPool(fairyProjectile, 5);
+        //globalPoolManager.instance.CreateWitchPool(witchProjectile, 5);
 
         // Initializes sliders to ensure they're full
         healthBar.value = playerHealth;

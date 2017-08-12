@@ -112,6 +112,29 @@ public class playerInput : MonoBehaviour
         }
 
 
+        // Handle wall jumping and wall sliding:
+        // wall Sliding:
+        // If the player is wall sliding, move the camera downwards
+        if (_player.wallSliding)
+        {
+            mainCamera.verticalOffset = vertOffsetFall;
+        }
+        // Wall Jumping - MMX
+        if (_player.wallSliding && _player.wallDirX == _directionalInput.x && _jump)
+        {
+            mainCamera.verticalOffset = vertOffsetJump;
+
+            // When jumping set the vertical smooth time
+            mainCamera.verticalSmoothTime = vertSmoothTimeJump;
+        }
+        // Jumping off wall without x
+        else if (_player.wallSliding && _directionalInput.x == 0 && _jump)
+        {
+            mainCamera.verticalOffset = verticalOffsetBase;
+        }
+
+
+
         // If the player is pressing on the jump key
         //  Have the player jump
         if (_jump)
@@ -149,7 +172,7 @@ public class playerInput : MonoBehaviour
         }
 
         // If the player is in the air, and they're pressing the jump key mid air
-        if (_jump && _isGliding)
+        if (_jump && _isGliding && !_player.wallSliding)
         {
             // Change animation to player gliding
             _anim.SetBool("anim_isGliding", true);
@@ -160,7 +183,11 @@ public class playerInput : MonoBehaviour
             // When falling, set vertical offset so the player can see below
             mainCamera.verticalOffset = vertOffsetFall;
         }
+
+
         
+
+
 
         // Controls player sprite
         //  Controls camera pointing direction alongside player facing direction

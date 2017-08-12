@@ -69,6 +69,20 @@ public class LumiController : MonoBehaviour
     [HideInInspector]
     public Vector3 _lumiVelocity;            // Stores the current velocity
 
+    // Defines the direction a wall is by x
+    [HideInInspector]
+    public int wallDirX;               // Defines the wall direction x
+
+    // bools to check if player is wall jumping
+    [HideInInspector]
+    public bool wallJumpMMX;
+    [HideInInspector]
+    public bool wallJumpNoXInput;
+    [HideInInspector]
+    public bool wallJumpOppositeXInput;
+    [HideInInspector]
+    public bool wallSliding;           // If the player is wall sliding
+
     // Private variables
     
 
@@ -86,10 +100,8 @@ public class LumiController : MonoBehaviour
     private Vector2 _directionalInput;
 
     // Gameplay checks
-    private bool wallSliding;           // If the player is wall sliding
     private bool _canGlide;             // CHecks weather the player can glide
 
-    private int wallDirX;               // Defines the wall direction x
 
     // Defines wall jumping and unsticking
     private float _timeToWallUnstick;
@@ -117,7 +129,7 @@ public class LumiController : MonoBehaviour
                 _lumiVelocity.x = -wallDirX * wallJumpclimb.x;
                 _lumiVelocity.y = wallJumpclimb.y;
             }
-            // Jumping off wall with x input 
+            // Jumping off wall without x input 
             else if (_directionalInput.x == 0 && canWallJumpOff)
             {
                 _lumiVelocity.x = -wallDirX * wallJumpOff.x;
@@ -230,6 +242,11 @@ public class LumiController : MonoBehaviour
         // If lumi is on the ground or hit something above, reset the velocity to 0
         if (_playerController.collisions.above || _playerController.collisions.below)
         {
+            // Defines the wall jump variables to be false when touching the ceeling or floor
+            wallJumpMMX = false;
+            wallJumpNoXInput = false;
+            wallJumpOppositeXInput = false;
+
             // If sliding down a max slope, gradually increase velocity
             if (_playerController.collisions.slidingDownMaxSlope)
             {

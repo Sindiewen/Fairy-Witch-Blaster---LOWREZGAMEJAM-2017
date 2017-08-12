@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -76,7 +77,8 @@ public class fairyPoolManager : MonoBehaviour
     /// <param name="prefab"></param>
     /// <param name="position"></param>
     /// <param name="rotation"></param>
-    public void ReuseObject(Lumi_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight, float projFireSpeed, ref int numOfProjectilesOnScreen)
+    public void ReuseObject(Lumi_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight
+        , float projFireSpeed, float projectileDeaspawnTime, ref int numOfProjectilesOnScreen)
     {
         // Gets the prefab's instance id
         int poolKey = prefab.GetInstanceID();
@@ -106,7 +108,7 @@ public class fairyPoolManager : MonoBehaviour
             objectToReuse.setProjectileFiringValues(projFireSpeed);
 
             // Disables projectile after a set time
-            objectToReuse.Invoke("destroyProjectile", 0.5f);
+            objectToReuse.Invoke("destroyProjectile", projectileDeaspawnTime);
         }
     }
 }
