@@ -4,22 +4,22 @@ using UnityEngine;
 
 
 /// <summary>
-/// Class for the fairy projectiles
+/// Class for the witch projectiles
 /// </summary>
-public class fairyPoolManager : MonoBehaviour
+public class witchPoolManager : MonoBehaviour
 {
     // Static values
-    static fairyPoolManager _instance;
+    static witchPoolManager _instance;
 
     // accessor
-    public static fairyPoolManager instance
+    public static witchPoolManager instance
     {
         get
         {
             if (_instance == null)
             {
                 // find instance of the pool manager script in the scene
-                _instance = FindObjectOfType<fairyPoolManager>();
+                _instance = FindObjectOfType<witchPoolManager>();
             }
             return _instance;
         }
@@ -76,7 +76,7 @@ public class fairyPoolManager : MonoBehaviour
     /// <param name="prefab"></param>
     /// <param name="position"></param>
     /// <param name="rotation"></param>
-    public void ReuseObject(Lumi_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight, float projFireSpeed, ref int numOfProjectilesOnScreen)
+    public void ReuseObject(Lumi_Projectile_Controller prefab, Vector2 position, Quaternion rotation, bool facingRight, float projFireSpeed , ref int numOfProjectilesOnScreen)
     {
         // Gets the prefab's instance id
         int poolKey = prefab.GetInstanceID();

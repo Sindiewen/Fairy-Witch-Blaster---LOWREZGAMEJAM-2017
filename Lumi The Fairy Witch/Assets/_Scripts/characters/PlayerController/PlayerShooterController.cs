@@ -59,6 +59,7 @@ public class PlayerShooterController : RaycastController
     [TooltipAttribute("Speed value for the projectile")]
     public float projFireSpeed;
 
+    public int maxNumProjOnScreen;
 
     // Stores the number of projectiles the player has shot currently
     public int numProjectilesOnScreen;
@@ -84,26 +85,13 @@ public class PlayerShooterController : RaycastController
     /// <param name="facingRight"></param>
     public void fireFairy(bool facingRight)
     {
-        if (_canMagic)
+        if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
-            /*
-            // If facing left
-            if (!facingRight)
-            {
-                // Sets the direction and speed of the projectile
-                // Sets the firespeed to go left
-                projFireSpeed *= -1;
-            }
-            else
-            {
-                projFireSpeed = Mathf.Abs(projFireSpeed);
-            }*/
-
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
-            fairyPoolManager.instance.ReuseObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed);
-            
+            fairyPoolManager.instance.ReuseObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, ref numProjectilesOnScreen);
+
             /*
             // Stores reference to the projectile clone
             //Lumi_Projectile_Controller projClone;
@@ -116,9 +104,20 @@ public class PlayerShooterController : RaycastController
             //projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
             projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as GameObject;
 
+             /*
+            // If facing left
+            if (!facingRight)
+            {
+                // Sets the direction and speed of the projectile
+                // Sets the firespeed to go left
+                projFireSpeed *= -1;
+            }
+            else
+            {
+                projFireSpeed = Mathf.Abs(projFireSpeed);
+            }
 
-            
-            
+
             // Sets the projectile values
             //projClone.setProjectileFiringValues(projSPeed);
             projClone.GetComponent<Lumi_Projectile_Controller>().setProjectileFiringValues(projSPeed);
@@ -139,8 +138,14 @@ public class PlayerShooterController : RaycastController
     /// <param name="facingRight"></param>
     public void fireWitch(bool facingRight)
     {
-        if (_canMagic && numProjectilesOnScreen < 3)
+        if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
+            Vector2 spawnLoc;
+            spawnLoc.x = projectileSpawnLocation.transform.position.x;
+            spawnLoc.y = projectileSpawnLocation.transform.position.y;
+            witchPoolManager.instance.ReuseObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, ref numProjectilesOnScreen);
+
+            /*
             // Stores reference to the projectile clone
             Lumi_Projectile_Controller projClone;
 
@@ -161,6 +166,7 @@ public class PlayerShooterController : RaycastController
             // Sets the projectile values
             projClone.setProjectileFiringValues(projSPeed);
 
+            */
             // Decrement your mana
             playerMana--;
 
@@ -181,7 +187,8 @@ public class PlayerShooterController : RaycastController
 
         // Object pooling
         //  Creates pool for the player projectiles
-        fairyPoolManager.instance.CreatePool(fairyProjectile, 3);
+        fairyPoolManager.instance.CreatePool(fairyProjectile, 5);
+        witchPoolManager.instance.CreatePool(witchProjectile, 5);
 
         // Initializes sliders to ensure they're full
         healthBar.value = playerHealth;

@@ -25,7 +25,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
         _boxCol = GetComponent<BoxCollider2D>();
     
         // Destroys the object after a set amount of time
-        Invoke("destroyProjectile", 0.5f);
+        //Invoke("destroyProjectile", 0.5f);
 	}
 	
 	void Update()
@@ -95,6 +95,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
 
     public void destroyProjectile()
     {
+        // Projectile is not being deactivated after a certain ammount have been spawned
         this.gameObject.SetActive(false);
         //Destroy(this.gameObject);
     }
