@@ -14,16 +14,15 @@ public class GoblinController : RaycastController
     public bool canPace = false;
     public float timeToPace = 1.0f;
 
-
     [HeaderAttribute("If not pacing, Determines how big the aggro box will be")]
     public float aggroRaySize = 1;      // How big the aggro box size will be
 
 
     // Private variables
+    // Reference to the enemy Input Manager for controling the enemy input
+    private EnemyInputManager _enemyInput;  // Reference to the enemy input manager
 
     // Defines enemy movement
-    private EnemyInputManager _enemyInput;  // Reference to the enemy input manager
-    private EnemyBase _enemyBase;           // Defines the enemy base
     private Vector2 moveDirection;          // Defines the direction the goblin will move
 
     // Checks if the enemy is invulnerable
@@ -84,14 +83,9 @@ public class GoblinController : RaycastController
     {
         gizmoBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
 
-        // Creates 2 raycasts, one for the hitbox, one for the aggrobox.
-        // hit is for collisions with any interactable object
-        // hitAggro is for generating when to aggro with the player
-        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, gizmoBox, 0, new Vector2(0, 0), 0, collisionMask);
+        // Creates 2 raycasts for checking if the enemy is colliding with the player to chase them
         RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, collisionMask);
         RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, collisionMask);
-
-        
 
         // Draws debug rays
         Debug.DrawRay(rayOrigin, Vector2.left * aggroRaySize, Color.blue);
@@ -101,6 +95,7 @@ public class GoblinController : RaycastController
         //  Move the enemy
         if (hitAggroLeft && !canPace)
         {
+            // If hit on left side, move the enemy left
             if (hitAggroLeft.collider.tag == "Lumi")
             {
                 moveDirection.x = -1;
@@ -112,20 +107,6 @@ public class GoblinController : RaycastController
             if (hitAggroRight.collider.tag == "Lumi")
             {
                 moveDirection.x = 1;
-            }
-        }
-
-       
-        if (hit)
-        {
-            /// If the enemy hit lumi projectile, subtract health
-            /// 
-            if (hit.collider.tag == "Lumi_Projectile")
-            {
-                //playerHealth--;
-                //_invulnerable = true;
-
-                //Invoke("resetInvulnerability", 0.05f);
             }
         }
     }

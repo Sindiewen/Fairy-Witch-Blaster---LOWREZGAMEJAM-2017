@@ -95,7 +95,8 @@ public class Lumi_Projectile_Controller : MonoBehaviour
 
     public void destroyProjectile()
     {
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
+        //Destroy(this.gameObject);
     }
 
    

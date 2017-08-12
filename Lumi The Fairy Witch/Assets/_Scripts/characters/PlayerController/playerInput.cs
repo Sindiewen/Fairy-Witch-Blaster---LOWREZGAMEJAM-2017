@@ -12,6 +12,7 @@ public class playerInput : MonoBehaviour
     [HeaderAttribute("Main camera object")]
     public CameraFollow mainCamera;
 
+    [HeaderAttribute("Control camera values for player control")]
     public float verticalOffsetBase;
     public float vertOffsetJump;
     public float vertOffsetFall;

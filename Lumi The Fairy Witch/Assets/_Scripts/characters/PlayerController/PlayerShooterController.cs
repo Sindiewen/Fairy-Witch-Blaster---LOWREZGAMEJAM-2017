@@ -50,7 +50,8 @@ public class PlayerShooterController : RaycastController
     public Transform projectileSpawnLocation;               // Location to spawn the projectile
 
     [TooltipAttribute("Stores the object for the player's fairy magic")]
-    public Lumi_Projectile_Controller fairyProjectile;      // Reference to the game object for the fairy projectile
+    //public Lumi_Projectile_Controller fairyProjectile;      // Reference to the game object for the fairy projectile
+    public Lumi_Projectile_Controller fairyProjectile;
     [TooltipAttribute("Stores the object for the player's witch magix")]
     public Lumi_Projectile_Controller witchProjectile;      // Reference to the game ovject for the witch projectile
 
@@ -66,8 +67,8 @@ public class PlayerShooterController : RaycastController
     private bool _invulnerable;     // Checks if the player is invulnerable or not
     private bool _canMagic;         // can cast magic
 
-    
-    
+
+
 
     // Gets the lumicontroller for velocity
     //private LumiController _lumi;
@@ -80,33 +81,49 @@ public class PlayerShooterController : RaycastController
     /// <summary>
     /// Controls the player firing fairy magic
     /// </summary>
-    /// <param name="fireDirection"></param>
+    /// <param name="facingRight"></param>
     public void fireFairy(bool facingRight)
     {
-        if (_canMagic && numProjectilesOnScreen < 3)
+        if (_canMagic)
         {
-            // Stores reference to the projectile clone
-            Lumi_Projectile_Controller projClone;
-
-            // Creates temp speed value for manipulation
-            float projSPeed = projFireSpeed;
-            
-            // Instantiates the projectile clone
-            projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
-
-
+            /*
             // If facing left
             if (!facingRight)
             {
                 // Sets the direction and speed of the projectile
                 // Sets the firespeed to go left
-                projSPeed *= -1;
+                projFireSpeed *= -1;
             }
+            else
+            {
+                projFireSpeed = Mathf.Abs(projFireSpeed);
+            }*/
 
-            // Sets the projectile values
-            projClone.setProjectileFiringValues(projSPeed);
+            Vector2 spawnLoc;
+            spawnLoc.x = projectileSpawnLocation.transform.position.x;
+            spawnLoc.y = projectileSpawnLocation.transform.position.y;
+            fairyPoolManager.instance.ReuseObject(fairyProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed);
             
+            /*
+            // Stores reference to the projectile clone
+            //Lumi_Projectile_Controller projClone;
+            GameObject projClone;
 
+            // Creates temp speed value for manipulation
+            float projSPeed = projFireSpeed;
+
+            // Instantiates the projectile clone
+            //projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as Lumi_Projectile_Controller;
+            projClone = Instantiate(fairyProjectile, projectileSpawnLocation.transform.position, Quaternion.identity) as GameObject;
+
+
+            
+            
+            // Sets the projectile values
+            //projClone.setProjectileFiringValues(projSPeed);
+            projClone.GetComponent<Lumi_Projectile_Controller>().setProjectileFiringValues(projSPeed);
+            
+            */
             // Decrement your mana
             playerMana--;
 
@@ -119,7 +136,7 @@ public class PlayerShooterController : RaycastController
     /// <summary>
     /// Controls the player firing witch magic
     /// </summary>
-    /// <param name="fireDirection"></param>
+    /// <param name="facingRight"></param>
     public void fireWitch(bool facingRight)
     {
         if (_canMagic && numProjectilesOnScreen < 3)
@@ -161,6 +178,10 @@ public class PlayerShooterController : RaycastController
     protected override void Start ()
     {
         base.Start();
+
+        // Object pooling
+        //  Creates pool for the player projectiles
+        fairyPoolManager.instance.CreatePool(fairyProjectile, 3);
 
         // Initializes sliders to ensure they're full
         healthBar.value = playerHealth;

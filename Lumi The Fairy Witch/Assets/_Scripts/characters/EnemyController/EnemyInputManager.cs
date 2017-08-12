@@ -13,12 +13,17 @@ public class EnemyInputManager : MonoBehaviour
     [HideInInspector]
     public LumiController _player;         // Reference to the base player controller
 
+    // Private variables
+    public SpriteRenderer _sprite;
+    public Animator _anim;
 
     // Use this for initialization
     private void Start()
     {
         // Initializes component references
         _player = GetComponent<LumiController>();       // Gets the lumicontroller component
+        _sprite = GetComponent<SpriteRenderer>();
+        _anim = GetComponent<Animator>();
 
     }
 
@@ -27,5 +32,16 @@ public class EnemyInputManager : MonoBehaviour
     {
         // Moves the character
         _player.SetDirecionalInput(_directionalInput);
+
+        // If the enemy is moving right
+        if (_directionalInput.x > 0)
+        {
+            _sprite.flipX = false;
+        }
+        // If the enemy is moving left
+        else if (_directionalInput.x < 0)
+        {
+            _sprite.flipX = true;
+        }
     }
 }

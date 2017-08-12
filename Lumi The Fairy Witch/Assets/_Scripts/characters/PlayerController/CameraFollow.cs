@@ -81,13 +81,17 @@ public class CameraFollow : MonoBehaviour
     [Tooltip("This will choose what the camera will follow")]
     public Base2DController target;         // Target to follow
 
+    [HideInInspector]
     [Tooltip("Vertical offset for the camera follow")]
     public float verticalOffset;            // vertical offset
 
+    [HideInInspector]
     [Tooltip("Distance to look ahead to on the x and y axis")]
     public float lookAheadDstX;
+    [HideInInspector]
     [Tooltip("smoothing time")]
     public float lookSmoothTimeX;
+    [HideInInspector]
     [Tooltip("Vertical smothing time")]
     public float verticalSmoothTime;
 
