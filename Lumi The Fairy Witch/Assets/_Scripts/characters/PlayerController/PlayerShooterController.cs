@@ -182,6 +182,27 @@ public class PlayerShooterController : RaycastController
     }
 
 
+    /// <summary>
+    /// Takes damage according to the damage sent
+    /// </summary>
+    /// <param name="damage"></param>
+    public void takeDamage(int damage)
+    {
+        if (!_invulnerable)
+        {
+            // Subtract health from the damage
+            playerHealth -= damage;
+
+            // Makes the player invulnerable
+            _invulnerable = true;
+
+            // Set the player to be invulnerable for a set period of time
+            Invoke("resetInvulnerability", invulnerabilityTime);
+        }
+        
+    }
+
+
     /* -------------------- */
     // Private class methods
     /* -------------------- */
@@ -269,16 +290,13 @@ public class PlayerShooterController : RaycastController
             {
                 // If the box cast it an eligable object
                 // Enemy, projectile
-                if (hit.collider.tag == "Enemy_Projectile" || hit.collider.tag == "Enemy")
+                if (hit.collider.tag == "Enemy")
                 {
                     // subtract 1 from the player health
                     playerHealth--;
 
                     // Makes the player invulnerable
                     _invulnerable = true;
-
-                    // Set the player to be invulnerable for a set period of time
-                    Invoke("resetInvulnerability", invulnerabilityTime);
                 }
 
                 // If the player has hit an instakil hazard (spikes, water, pitfalls)

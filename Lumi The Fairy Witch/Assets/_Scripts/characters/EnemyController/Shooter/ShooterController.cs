@@ -95,6 +95,10 @@ public class ShooterController : MonoBehaviour
                 yield return new WaitForSeconds(bursFireWaitTime);
                 
             }
+            else
+            {
+                yield return null;
+            }
         }
     }
     

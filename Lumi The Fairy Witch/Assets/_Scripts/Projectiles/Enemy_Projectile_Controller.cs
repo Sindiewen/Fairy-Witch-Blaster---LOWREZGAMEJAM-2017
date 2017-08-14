@@ -7,6 +7,8 @@ public class Enemy_Projectile_Controller : MonoBehaviour
     // public variables
     public LayerMask collisionMask;
 
+    public int damageToDeal;
+
     // Private variables
 
     private float _projectileSpeed;					// How fast the projectile will fire by time.deltatime and the vector 2 direction
@@ -73,13 +75,13 @@ public class Enemy_Projectile_Controller : MonoBehaviour
             //Debug.Log(hit.transform.name);
 
             // Gets the component of anything thats of EnemyBase
-            EnemyBase enemy = hit.transform.GetComponent<EnemyBase>();
+            PlayerShooterController player = hit.transform.GetComponent<PlayerShooterController>();
 
             // If not null, has enemyBase component
-            if (enemy != null)
+            if (player != null)
             {
                 // Have the enemy take damage
-                enemy.takeDamage();
+                player.takeDamage(damageToDeal);
             }
 
             // If the projectile has hit an enemy or an enviroment, destroy the projectile

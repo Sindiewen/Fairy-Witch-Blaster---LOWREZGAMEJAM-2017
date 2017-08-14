@@ -10,6 +10,8 @@ public class Lumi_Projectile_Controller : MonoBehaviour
     // public variables
     public LayerMask collisionMask;
 
+    public int damageToDeal;
+
 	// Private variables
 
 	private float _projectileSpeed;					// How fast the projectile will fire by time.deltatime and the vector 2 direction
@@ -80,7 +82,7 @@ public class Lumi_Projectile_Controller : MonoBehaviour
             if (enemy != null)
             {
                 // Have the enemy take damage
-                enemy.takeDamage();
+                enemy.takeDamage(damageToDeal);
             }
 
             // If the projectile has hit an enemy or an enviroment, destroy the projectile

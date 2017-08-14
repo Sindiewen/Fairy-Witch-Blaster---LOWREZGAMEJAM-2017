@@ -20,9 +20,9 @@ public class EnemyBase : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public void takeDamage()
+    public void takeDamage(int damage)
     {
-        playerHealth--;
+        playerHealth -= damage;
 
         // If the health is less or equal to 0, destroy the enemy
         if (playerHealth <= 0)
