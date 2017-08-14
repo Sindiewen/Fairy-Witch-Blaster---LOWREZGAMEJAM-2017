@@ -1,25 +1,28 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
 /// <summary>
 /// Creates object pool for projectiles
 /// </summary>
 public class enemyPoolManager : MonoBehaviour
 {
     // Static values
-    static enemyPoolManager _instance;
+    static enemyPoolManager _enemyInstance;
 
     // accessor
     public static enemyPoolManager instance
     {
         get
         {
-            if (_instance == null)
+            if (_enemyInstance == null)
             {
                 // find instance of the pool manager script in the scene
-                _instance = FindObjectOfType<enemyPoolManager>();
+                _enemyInstance = FindObjectOfType<enemyPoolManager>();
             }
-            return _instance;
+            return _enemyInstance;
         }
     }
 

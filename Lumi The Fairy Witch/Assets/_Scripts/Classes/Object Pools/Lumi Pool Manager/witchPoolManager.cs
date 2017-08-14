@@ -10,19 +10,19 @@ using UnityEngine;
 public class witchPoolManager : MonoBehaviour
 {
     // Static values
-    static witchPoolManager _instance;
+    static witchPoolManager _witchInstance;
 
     // accessor
     public static witchPoolManager instance
     {
         get
         {
-            if (_instance == null)
+            if (_witchInstance == null)
             {
                 // find instance of the pool manager script in the scene
-                _instance = FindObjectOfType<witchPoolManager>();
+                _witchInstance = FindObjectOfType<witchPoolManager>();
             }
-            return _instance;
+            return _witchInstance;
         }
     }
 

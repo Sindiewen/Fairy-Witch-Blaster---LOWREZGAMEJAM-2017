@@ -10,19 +10,19 @@ using UnityEngine;
 public class fairyPoolManager : MonoBehaviour
 {
     // Static values
-    static fairyPoolManager _instance;
+    static fairyPoolManager _fairyInstance;
 
     // accessor
     public static fairyPoolManager instance
     {
         get
         {
-            if (_instance == null)
+            if (_fairyInstance == null)
             {
                 // find instance of the pool manager script in the scene
-                _instance = FindObjectOfType<fairyPoolManager>();
+                _fairyInstance = FindObjectOfType<fairyPoolManager>();
             }
-            return _instance;
+            return _fairyInstance;
         }
     }
 
