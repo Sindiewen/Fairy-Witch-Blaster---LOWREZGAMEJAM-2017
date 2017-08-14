@@ -148,7 +148,7 @@ public class PlayerShooterController : RaycastController
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
-            //witchPoolManager.instance.ReuseObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
+            witchPoolManager.instance.ReuseObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
             //globalPoolManager.instance.ReuseWitchObject(witchProjectile, spawnLoc, Quaternion.identity, facingRight, projFireSpeed, projectileDespawnTime, ref numProjectilesOnScreen);
 
             /*

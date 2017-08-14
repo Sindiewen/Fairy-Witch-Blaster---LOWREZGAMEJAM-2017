@@ -7,7 +7,7 @@ using UnityEngine;
 /// Passes movement values to the enemyInputManager.cs class to move the enemy.
 /// </summary>
 [RequireComponent(typeof (EnemyInputManager))]
-public class GoblinController : RaycastController
+public class GoblinController : MonoBehaviour
 {
     // Public variables
    [HeaderAttribute("Toggles weather the goblin will pace back and forth. and how long they'll pace")]
@@ -37,12 +37,11 @@ public class GoblinController : RaycastController
 
 
     // Protected class methods 
+    // Private class methods
 
     // Overidded start method
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         // gets component references
         _enemyInput = GetComponent<EnemyInputManager>();
 
@@ -51,10 +50,11 @@ public class GoblinController : RaycastController
 
         // Starts coroutine for pacing the goblin
         StartCoroutine("paceGoblin");
-
     }
 
-    // Private class methods
+
+    
+
 
     private void Update()
     {
@@ -81,11 +81,11 @@ public class GoblinController : RaycastController
     /// </summary>
     private void aggroBoxCollisions()
     {
-        gizmoBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
+        gizmoBox = _enemyInput._boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
 
         // Creates 2 raycasts for checking if the enemy is colliding with the player to chase them
-        RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, collisionMask);
-        RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, collisionMask);
+        RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, _enemyInput.collisionMask);
+        RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, _enemyInput.collisionMask);
 
         // Draws debug rays
         Debug.DrawRay(rayOrigin, Vector2.left * aggroRaySize, Color.blue);
@@ -132,14 +132,5 @@ public class GoblinController : RaycastController
 
             yield return new WaitForSeconds(timeToPace);
         }
-    }
-
-    /// <summary>
-    /// Once called, the player will no longer be invulnerable to hits
-    /// 
-    /// </summary>
-    private void resetInvulnerability()
-    {
-        //_invulnerable = false;
     }
 }

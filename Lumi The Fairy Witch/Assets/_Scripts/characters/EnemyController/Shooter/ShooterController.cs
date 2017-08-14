@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyInputManager))]
-public class ShooterController : RaycastController
+public class ShooterController : MonoBehaviour
 {
 
     // Public variables
@@ -30,12 +30,11 @@ public class ShooterController : RaycastController
     // Bools to check if the player has been found
     private bool _LumiFound;
 
-    // Bool checks the direction the enemy is facing
-    private bool _facingRight;
+    
 
 
     // Reference to the enemy Input Manager for controling the enemy input
-    //private EnemyInputManager _enemyInput;  // Reference to the enemy input manager
+    private EnemyInputManager _enemyInput;  // Reference to the enemy input manager
 
     // Defines enemy movement
     private Vector2 moveDirection;          // Defines the direction the goblin will move
@@ -49,38 +48,22 @@ public class ShooterController : RaycastController
 
 
 
-    // Protected class methods 
-
-    // Overidded start method
-    protected override void Start()
+    // Private class methods 
+    private void Start()
     {
-        base.Start();
-
-        // checks if the enemy is facing right
-        if (this.transform.localScale.x > 0)
-        {
-            _facingRight = true;
-        }
-        else
-        {
-            _facingRight = false;
-        }
+        // gets component references
+        _enemyInput = GetComponent<EnemyInputManager>();
 
         // Creates pool for the enemy projectiles
         enemyPoolManager.instance.CreatePool(enemyProj, 5);
         //globalPoolManager.instance.CreateEnemyPool(enemyProj, 5);
-
-        // gets component references
-        //_enemyInput = GetComponent<EnemyInputManager>();
 
         // Starts coroutine for pacing the goblin
         StartCoroutine("ShooterControl");
 
         // Defaults lumi to be found being false
         _LumiFound = false;
-
     }
-
     // Private class methods
 
     /// <summary>
@@ -125,19 +108,7 @@ public class ShooterController : RaycastController
         aggroBoxCollisions();
 
         // Sets the directionalInput to the current move direction
-        //_enemyInput._directionalInput = moveDirection;
-
-        // Sets the direction the enemy is facing
-        // checks if the enemy is facing right
-        if (this.transform.localScale.x > 0)
-        {
-            _facingRight = true;
-        }
-        else
-        {
-            _facingRight = false;
-        }
-
+        _enemyInput._directionalInput = moveDirection;
     }
 
 
@@ -149,11 +120,11 @@ public class ShooterController : RaycastController
     private void aggroBoxCollisions()
     {
         // Defines the box size
-        giz_AggroBox = _boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
+        giz_AggroBox = _enemyInput._boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
 
         // Creates 2 raycasts for checking if the enemy is colliding with the player to chase them
-        RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, collisionMask);
-        RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, collisionMask);
+        RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, _enemyInput.collisionMask);
+        RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, _enemyInput.collisionMask);
 
         // Draws debug rays
         Debug.DrawRay(rayOrigin, Vector2.left * aggroRaySize, Color.blue);
@@ -166,7 +137,8 @@ public class ShooterController : RaycastController
             // If hit on left side, move the enemy left
             if (hitAggroLeft.collider.tag == "Lumi")
             {
-                flipCharacterLeft();
+                // "move" the enemy to the left
+                moveDirection.x = -1;
 
                 // lumi has been found on the left
                 _LumiFound = true;
@@ -177,7 +149,8 @@ public class ShooterController : RaycastController
         {
             if (hitAggroRight.collider.tag == "Lumi")
             {
-                flipCharacterRight();
+                // "move" the enemy to the right
+                moveDirection.x = 1;
 
                 // Lumi has been found on the right
                 _LumiFound = true;
@@ -190,45 +163,6 @@ public class ShooterController : RaycastController
     }
 
     /// <summary>
-    /// Flips the character left
-    /// </summary>
-    private void flipCharacterLeft()
-    {
-        // Temp variable to change scale
-        Vector2 enemyScale = transform.transform.localScale;
-
-        if (enemyScale.x > 0)
-        {
-            // Changes scale variable
-            enemyScale.x *= -1;
-
-            // Applies change
-            this.transform.localScale = enemyScale;
-        }
-        
-        
-    }
-
-    /// <summary>
-    /// Flips the character right
-    /// </summary>
-    private void flipCharacterRight()
-    {
-        // Temp variable to change scale
-        Vector2 enemyScale = transform.transform.localScale;
-
-        if (enemyScale.x < 0)
-        {
-            // Changes scale variable
-            enemyScale.x *= -1;
-
-            // applies change
-            this.transform.localScale = enemyScale;
-        }
-        
-    }
-
-    /// <summary>
     /// Fires the enemy projetile from the pool
     /// 
     /// 
@@ -238,7 +172,7 @@ public class ShooterController : RaycastController
         Vector2 spawnLoc;
         spawnLoc.x = projectileSpawnLocation.transform.position.x;
         spawnLoc.y = projectileSpawnLocation.transform.position.y;
-        enemyPoolManager.instance.ReuseObject(enemyProj, spawnLoc, Quaternion.identity, _facingRight, projectileDespawnTime, projectileFireSpeed);
+        enemyPoolManager.instance.ReuseObject(enemyProj, spawnLoc, Quaternion.identity, _enemyInput._facingRight, projectileDespawnTime, projectileFireSpeed);
         //globalPoolManager.instance.ReuseEnemyObject(enemyProj, spawnLoc, Quaternion.identity, _facingRight, projectileDespawnTime, projectileFireSpeed);
     }
 
