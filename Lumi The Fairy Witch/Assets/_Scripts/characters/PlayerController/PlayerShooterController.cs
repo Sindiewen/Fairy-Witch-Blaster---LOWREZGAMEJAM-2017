@@ -278,34 +278,33 @@ public class PlayerShooterController : RaycastController
     /// </summary>
     private void playerBoxCollisions()
     {
-        if (!_invulnerable)
+        Vector2 rayOrigin = transform.position;     // Origin at the players current position
+
+        // Creates a boxcast around the player
+        // Creates box cast at origin, the size of the player's collider, no angle, no direction, no distance, and at a specific layer
+        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, _boxCol.bounds.size, 0, new Vector2(0, 0), 0, collisionMask);
+
+        if (hit)
         {
-            Vector2 rayOrigin = transform.position;     // Origin at the players current position
-            
-            // Creates a boxcast around the player
-            // Creates box cast at origin, the size of the player's collider, no angle, no direction, no distance, and at a specific layer
-            RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, _boxCol.bounds.size, 0, new Vector2(0,0), 0, collisionMask);
-            
-            if (hit)
+            // If the box cast it an eligable object
+            // Enemy, projectile
+            if (hit.collider.tag == "Enemy" && !_invulnerable)
             {
-                // If the box cast it an eligable object
-                // Enemy, projectile
-                if (hit.collider.tag == "Enemy")
-                {
-                    // subtract 1 from the player health
-                    playerHealth--;
+                // subtract 1 from the player health
+                playerHealth--;
 
-                    // Makes the player invulnerable
-                    _invulnerable = true;
-                }
+                // Makes the player invulnerable
+                _invulnerable = true;
 
-                // If the player has hit an instakil hazard (spikes, water, pitfalls)
-                if (hit.collider.tag == "Hazard_Instakill")
-                {
-                    playerHealth = 0;
-                }
+                // Set the player to be invulnerable for a set period of time
+                Invoke("resetInvulnerability", invulnerabilityTime);
             }
-           
+
+            // If the player has hit an instakil hazard (spikes, water, pitfalls)
+            if (hit.collider.tag == "Hazard_Instakill")
+            {
+                playerHealth = 0;
+            }
         }
     }
 
