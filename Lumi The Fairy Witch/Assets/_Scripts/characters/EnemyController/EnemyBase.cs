@@ -26,8 +26,8 @@ public class EnemyBase : MonoBehaviour
 
         // Initializes the audio
         _audio = GetComponent<AudioSource>();
-        _audio.clip = hitSound;
         _audio.playOnAwake = false;
+
     }
 
     /// <summary>
@@ -44,6 +44,7 @@ public class EnemyBase : MonoBehaviour
     public void takeDamage(int damage)
     {
         // Plays hit sound
+        _audio.clip = hitSound;
         _audio.Play();
 
         // Subtracts enemy health
