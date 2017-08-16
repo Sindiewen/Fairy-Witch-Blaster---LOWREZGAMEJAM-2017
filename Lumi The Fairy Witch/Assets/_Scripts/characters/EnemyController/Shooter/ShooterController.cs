@@ -55,7 +55,7 @@ public class ShooterController : MonoBehaviour
         _enemyInput = GetComponent<EnemyInputManager>();
 
         // Creates pool for the enemy projectiles
-        enemyPoolManager.instance.CreatePool(enemyProj, 5);
+        enemyPoolManager.instance.CreatePool(enemyProj, 8);
         //globalPoolManager.instance.CreateEnemyPool(enemyProj, 5);
 
         // Starts coroutine for pacing the goblin
