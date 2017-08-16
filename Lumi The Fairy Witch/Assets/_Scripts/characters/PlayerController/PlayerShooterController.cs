@@ -39,6 +39,10 @@ public class PlayerShooterController : RaycastController
     public float manaRegenRate = 1.0f;      // How long per second to regen mana
     [TooltipAttribute("How much to regen mana per second")]
     public int manaRegenAmmount = 1;   // How much mana to regen persecond
+    [TooltipAttribute("How long in seconds to regenerate player health")]
+    public float healthRegenRate = 1.0f;
+    [TooltipAttribute("How much health to regen")]
+    public int healthRegenAmmount = 1;
 
     [Space(10)]
     [TooltipAttribute("How long the player will be invulnerable")]
@@ -64,6 +68,12 @@ public class PlayerShooterController : RaycastController
 
     [TooltipAttribute("The time in seconds how long a projectile lasts in the scene before removing it")]
     public float projectileDespawnTime = 0.5f;
+    [TooltipAttribute("The projectile fire sound")]
+    public AudioClip projectileFire;
+
+    //
+    [Space(10)]
+    public GameObject gameOverObject;
 
     // Stores the number of projectiles the player has shot currently
     public int numProjectilesOnScreen;
@@ -71,6 +81,10 @@ public class PlayerShooterController : RaycastController
     // Private class variables
     private bool _invulnerable;     // Checks if the player is invulnerable or not
     private bool _canMagic;         // can cast magic
+
+    // reference to the player audio source
+    private AudioSource _audio;
+    
 
 
 
@@ -91,6 +105,9 @@ public class PlayerShooterController : RaycastController
     {
         if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
+            // plays projectile fire audio
+            _audio.Play();
+
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
@@ -145,6 +162,9 @@ public class PlayerShooterController : RaycastController
     {
         if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
+            // plays projectile fire audio
+            _audio.Play();
+
             Vector2 spawnLoc;
             spawnLoc.x = projectileSpawnLocation.transform.position.x;
             spawnLoc.y = projectileSpawnLocation.transform.position.y;
@@ -229,8 +249,17 @@ public class PlayerShooterController : RaycastController
         // player defaults to can cast magic
         _canMagic = true;
 
+        // Initializes the audio source component
+        _audio = GetComponent<AudioSource>();
+        _audio.clip = projectileFire;
+        _audio.playOnAwake = false;
+
+        // disables the gamober ui object
+        gameOverObject.SetActive(false);
+
         // Starts coroutine to start the mana regeneration process imediately
         StartCoroutine("manaRegen");
+        StartCoroutine("healthRegen");
 
         // Creates a starting ammount of projectiles
         numProjectilesOnScreen = 0;
@@ -328,8 +357,13 @@ public class PlayerShooterController : RaycastController
         // sets the health bar to 0
         healthBar.value = playerHealth;
 
+        // Game over object displays
+        gameOverObject.SetActive(true);
+
         // disables the character 
         gameObject.SetActive(false);
+
+        
     }
 
     
@@ -352,6 +386,22 @@ public class PlayerShooterController : RaycastController
                 yield return new WaitForSeconds(manaRegenRate);
             }
             else // If the mana is greater than max, just yield
+            {
+                yield return null;
+            }
+        }
+    }
+
+    private IEnumerator healthRegen()
+    {
+        while (true)
+        {
+            if (playerHealth < 10)
+            {
+                playerHealth += healthRegenAmmount;
+                yield return new WaitForSeconds(healthRegenRate);
+            }
+            else
             {
                 yield return null;
             }

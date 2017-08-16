@@ -20,6 +20,8 @@ public class ShooterController : MonoBehaviour
     public float projectileFireSpeed;           // COntrols how fast the projectile will fire
     [TooltipAttribute("How long before the projectile despawns")] 
     public float projectileDespawnTime;
+    [TooltipAttribute("Projectile fire sound")]
+    public AudioClip projectileFire;
 
 
     [HeaderAttribute("If not pacing, Determines how big the aggro box will be")]
@@ -29,6 +31,9 @@ public class ShooterController : MonoBehaviour
     // Private variables
     // Bools to check if the player has been found
     private bool _LumiFound;
+
+    // audio source reference
+    private AudioSource _audio;
 
     
 
@@ -53,6 +58,8 @@ public class ShooterController : MonoBehaviour
     {
         // gets component references
         _enemyInput = GetComponent<EnemyInputManager>();
+        _audio = GetComponent<AudioSource>();
+        _audio.playOnAwake = false;
 
         // Creates pool for the enemy projectiles
         enemyPoolManager.instance.CreatePool(enemyProj, 8);
@@ -173,6 +180,9 @@ public class ShooterController : MonoBehaviour
     /// </summary>
     private void fireProjectile()
     {
+        _audio.clip = projectileFire;
+        _audio.Play();
+
         Vector2 spawnLoc;
         spawnLoc.x = projectileSpawnLocation.transform.position.x;
         spawnLoc.y = projectileSpawnLocation.transform.position.y;

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using TMPro;
 
 /// <summary>
 /// Controls the goblin enemy AI
@@ -17,6 +18,7 @@ public class GoblinController : MonoBehaviour
     [HeaderAttribute("If not pacing, Determines how big the aggro box will be")]
     public float aggroRaySize = 1;      // How big the aggro box size will be
 
+    
 
     // Private variables
     // Reference to the enemy Input Manager for controling the enemy input
@@ -44,6 +46,7 @@ public class GoblinController : MonoBehaviour
     {
         // gets component references
         _enemyInput = GetComponent<EnemyInputManager>();
+        
 
         // sets invulnerability to false
         //_invulnerable = false;
