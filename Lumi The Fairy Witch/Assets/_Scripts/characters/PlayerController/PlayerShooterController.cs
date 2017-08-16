@@ -70,6 +70,7 @@ public class PlayerShooterController : RaycastController
     public float projectileDespawnTime = 0.5f;
     [TooltipAttribute("The projectile fire sound")]
     public AudioClip projectileFire;
+    public AudioClip lumiHitSound;
 
     //
     [Space(10)]
@@ -106,6 +107,7 @@ public class PlayerShooterController : RaycastController
         if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
             // plays projectile fire audio
+            _audio.clip = projectileFire;
             _audio.Play();
 
             Vector2 spawnLoc;
@@ -163,6 +165,7 @@ public class PlayerShooterController : RaycastController
         if (_canMagic && numProjectilesOnScreen < maxNumProjOnScreen)
         {
             // plays projectile fire audio
+            _audio.clip = projectileFire;
             _audio.Play();
 
             Vector2 spawnLoc;
@@ -210,6 +213,10 @@ public class PlayerShooterController : RaycastController
     {
         if (!_invulnerable)
         {
+            // Plays lumi hit sound
+            _audio.clip = lumiHitSound;
+            _audio.Play();
+
             // Subtract health from the damage
             playerHealth -= damage;
 
@@ -251,7 +258,6 @@ public class PlayerShooterController : RaycastController
 
         // Initializes the audio source component
         _audio = GetComponent<AudioSource>();
-        _audio.clip = projectileFire;
         _audio.playOnAwake = false;
 
         // disables the gamober ui object
@@ -319,20 +325,15 @@ public class PlayerShooterController : RaycastController
             // Enemy, projectile
             if (hit.collider.tag == "Enemy" && !_invulnerable)
             {
-                // subtract 1 from the player health
-                playerHealth--;
-
-                // Makes the player invulnerable
-                _invulnerable = true;
-
-                // Set the player to be invulnerable for a set period of time
-                Invoke("resetInvulnerability", invulnerabilityTime);
+                // Player takes damage
+                takeDamage(1);
             }
 
             // If the player has hit an instakil hazard (spikes, water, pitfalls)
             if (hit.collider.tag == "Hazard_Instakill")
             {
-                playerHealth = 0;
+                // Player takes damage
+                takeDamage(999);
             }
         }
     }
