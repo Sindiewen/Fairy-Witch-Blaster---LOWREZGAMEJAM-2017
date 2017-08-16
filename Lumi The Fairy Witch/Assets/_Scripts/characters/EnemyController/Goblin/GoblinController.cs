@@ -81,11 +81,12 @@ public class GoblinController : MonoBehaviour
     /// </summary>
     private void aggroBoxCollisions()
     {
-        gizmoBox = _enemyInput._boxCol.bounds.size + new Vector3(0.1f, 0.1f, 0.0f);
+        gizmoBox = _enemyInput._boxCol.bounds.size;
 
         // Creates 2 raycasts for checking if the enemy is colliding with the player to chase them
         RaycastHit2D hitAggroLeft = Physics2D.Raycast(rayOrigin, Vector2.left, aggroRaySize, _enemyInput.collisionMask);
         RaycastHit2D hitAggroRight = Physics2D.Raycast(rayOrigin, Vector2.right, aggroRaySize, _enemyInput.collisionMask);
+        RaycastHit2D hazardHit = Physics2D.BoxCast(rayOrigin, gizmoBox, 0, Vector2.zero, 0, _enemyInput.collisionMask); 
 
         // Draws debug rays
         Debug.DrawRay(rayOrigin, Vector2.left * aggroRaySize, Color.blue);
@@ -109,11 +110,28 @@ public class GoblinController : MonoBehaviour
                 moveDirection.x = 1;
             }
         }
+
+        if (hazardHit)
+        {
+            // If the player has hit an instakil hazard (spikes, water, pitfalls)
+            if (hazardHit.collider.tag == "Hazard_Instakill")
+            {
+                // Gets the component of anything thats of EnemyBase
+                EnemyBase enemy = this.GetComponent<EnemyBase>();
+
+                // If not null, has enemyBase component
+                if (enemy != null)
+                {
+                    // Have the enemy take damage
+                    enemy.takeDamage(999);
+                }
+            }
+        }
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = new Color(1, 0, 0, 0.5f);
+        Gizmos.color = new Color(0, 0, 1, 0.5f);
 
         Gizmos.DrawCube(rayOrigin, gizmoBox);
     }
